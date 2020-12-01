@@ -8,6 +8,16 @@ shutdown -P now #立刻关机
 uptime # 查看主机running time
 
 ```
+
+#### man, pwd, touch, clear
+```python
+man ls # get the help for commands
+pwd  # show the current directory
+touch andy.txt # create a file
+clear # clear screen, or using shortcut 'control+l'
+
+```
+
 #### 磁盘分区: df, fdisk, lsblk
 ```python
 df -h  # 查看磁盘使用情况 
@@ -85,7 +95,7 @@ scp andy@172.16.100.23: /usr/data/ . # copy remote host file to local current di
 
 ```
 
-#### mkdir & rmdir & rm 
+#### mkdir & rmdir & rm & mv
 ```python
 mkdir andy # create a folder
 mkdir -p andy/andy2/andy3 # create multi-layer folder
@@ -95,6 +105,8 @@ touch andy.txt # create a file
 rm andy.txt  # remove a file
 rm -f andy.txt  # force remove a file
 rm -rf folder  # force remove a dir, equal to rmdir 
+mv andy.txt ~/data  # move file 
+mv andy.txt andy2.txt #rename the file
 
 ```
 
@@ -153,39 +165,85 @@ timedatectl set-time 16:43:32  # set the time, format: HH:MM:SS
 
 ```
 
-#### 
+#### wildcards
+```python
+ls /dev/sda? # ? represents or matches a single occurrence of any character
+ls /dev/sda?? # matches two character
+ls /dev/sda*  # * matches any characters
+ls /dev/s*a] # matches sda
+ls /dev/sda[0-9] # matches sda0 - sda9
+ls /dev/sda[12] # matches sda1,sda2
+ls /dev/sd[a] # matches sda
+ls /dev/sd[a-z] # matches sda -sdz
+
+```
+
+#### output/input redirection
+```python
+output redirection
+ echo "hello world" > andy.txt # redirect the output to file, > stands for overwrite
+ echo "hello world" >> andy.txt # append the output to file, >> stands for append
+ andy -s 2> andy.txt # redirect the error output to file, 2 stands for output error message
+ andy -s 2>> andy.txt # append the error output to file, 2 stands for output error message
+ andy -s &> andy.txt # redirect the error & standard output to file, & stands for output error and standard message
+ cat /etc/passwd &>> andy.txt # append the error & standard output to file, & stands for output error and standard message
+ 
+ 
+```
+
+#### pipe & wc
+```python
+|  # transfer the output to next input 
+cat /etc/passwd | wc -l  # prints the number of lines
+echo "this is andy" | wc -c # displays count of bytes present in a file
+echo "this is andy" | wc -w # displays count of word present in a file
+
+```
+
+#### w & who & whoami
+```python
+[root@andycentos ~]# w
+ 13:04:06 up 2 days,  3:30,  7 users,  load average: 0.61, 0.16, 0.09
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+root     tty1                      Mon19    3days  1.35s  0.02s -bash
+root     pts/0    172.20.10.4      09:47    1:44m  0.16s  0.00s less -s
+root     pts/1    172.20.10.4      10:34    1:43m  0.02s  0.02s -bash
+root     pts/2    172.20.10.4      12:00   20:38   0.15s  0.15s -bash
+root     pts/3    172.20.10.4      12:00   15:02   0.03s  0.03s -bash
+root     pts/4    172.20.10.4      13:03    6.00s  0.04s  0.01s w
+root     pts/5    172.20.10.4      13:03   11.00s  0.02s  0.02s -bash
+
+USER：显示登陆系统的用户的帐号名。如果用户重复登录，则该帐号名就会重复显示。
+
+TTY：用户登录的终端代号。登录的形式不同，登录代号也不相同。
+
+FROM：显示用户从何处登录系统。如果是本地登录，则此字段为-，若从远程登录，便会显示远程主机的IP地址或主机名。至于“:0.0”之类的标示，代表该用户是从X Window System以文本模式登录的。
+
+LOGIN@：这是Login At的意思，表示该用户登录系统时的时间（不是登录后经过的时间）。
+
+IDLE：表示用户闲置的时间。这是一个计时器，一旦用户执行任何操作，该计时器便会被重置。
+
+JCPU：以终端的代号区分显示，表示该终端所有相关的进程（process）执行时所消耗的cpu时间。每当进程结束就停止计时，开始新的进程则会重新计时。
+
+PCPU：表示cpu执行程序消耗的时间。
+
+ WHAT：表示用户正在执行的程序的名称，如果正在执行文本模式命令，则会显示用户环境的名称。
+```
+```python
+who  # show the login user info
+whoami  # show current login user name
+
+```
+
+####  
 ```python
 
 
 ```
 
-#### 
+#### which
 ```python
-
-
-```
-
-#### 
-```python
-
-
-```
-
-#### 
-```python
-
-
-```
-
-#### 
-```python
-
-
-```
-
-#### 
-```python
-
+which ls # check command file location
 
 ```
 
