@@ -8,7 +8,7 @@ shutdown -P now #立刻关机
 uptime # 查看主机running time
 
 ```
-#### 磁盘分区
+#### 磁盘分区: df, fdisk, lsblk
 ```python
 df -h  # 查看磁盘使用情况 
 fdisk -l   # 查看磁盘分区 
@@ -25,7 +25,7 @@ lvextend -r centos/root /dev/sda2  # r stand for resize
 
 ```
 
-#### 内存&CPU
+#### 内存&CPU: free, top, ps
 ```python
 free -h # 查看内存使用情况， -h 代表human readable
 top # 查看CPU使用情况, 按’z‘ 彩色显示进程, 'c' display absolute path of running pro
@@ -36,13 +36,16 @@ ps -ef # 以标准语法显示正在运行的进程
 
 ```
 
-#### Hostnamectl
+#### Hostnamectl & uname & hostname
 ```python
 hostname # 查看主机名
 hostnamectl # 查看主机信息（主机名，OS， Kernel，icon name), 包含（uname, hostname, cat /etc/redhat-release, cat /proc/version ）
 hostnamectl set-hostname andycentos # 修改主机名，立即生效无需重启
 hostnamectl set-location Shanghai  # set location
 hostnamectl set-icon-name Helloworld # set icon name
+uname  # show the system type
+uname -a  # show all the system info
+uname -r  # only show the kernel info
 
 ```
 
@@ -115,18 +118,124 @@ tail -vn 5 andy.txt # display the tail 5 lines
 
 ```
 
-#### 
+#### kill
 ```python
+kill 2323 # kill pid process
+kill -15 2323 # 15 is default option, just send the kill order, if the pid is using the call will fail
+kill -9 2323 # force kill pid process
+
+```
+
+#### du
+```python
+du a.txt # show the size of file
+du # show the file size of current dir
+du -s /root # show the total size 
+du -sh /root # -h stands for human readable
+ll -h # show the actual file size, du show the minimal storge unit, start from 4K(if file size is 1.4k, will show 4k by du command)
+
+
+```
+
+#### date & timedatectl
+```python
+date # check date
+date "+%Y/%m/%d"  # show the date like 2020/10/20
+date "+%H:%M:%S"  # show the time like 14:32:30
+date "+%Y-%m-%d %H:%M:%S" # 2020-12-01 02:03:22
+date "+%F %T"  # the same as above
+timedatectl   # show the date and time zone info
+timedatactl list-timezones # list time zones
+timedatectl set-timezone Asia/Shanghai # set time zone
+timedatectl set-time 2020-11-30  # set the date, format: YY-MM-DD
+timedatectl set-time 16:43:32  # set the time, format: HH:MM:SS
+
 
 ```
 
 #### 
 ```python
 
-```
+
+``
+
+#### 
+```python
 
 
+``
 
+#### 
+```python
+
+
+``
+
+#### 
+```python
+
+
+``
+
+#### 
+```python
+
+
+``
+
+#### 
+```python
+
+
+``
+
+#### 
+```python
+
+
+``
+
+#### 
+```python
+
+
+``
+
+#### 
+```python
+
+
+``
+
+#### 
+```python
+
+
+``
+
+#### 
+```python
+
+
+``
+
+#### 
+```python
+
+
+``
+
+#### 
+```python
+
+
+``
+
+#### 
+```python
+
+
+``
 
 
 
