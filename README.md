@@ -1,4 +1,4 @@
-## Linux Often Use Commands
+## Linux Basic Commands
 
 #### 开机关机
 ```python
