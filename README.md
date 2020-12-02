@@ -42,6 +42,8 @@ top # 查看CPU使用情况, 按’z‘ 彩色显示进程, 'c' display absolute
 top -u root #查看root用户使用的进程
 ps -aux # 以BSD语法显示正在运行的进程
 ps -ef # 以标准语法显示正在运行的进程
+more /proc/cpuinfo # show the cpu info 
+more /proc/cpuinfo | grep 'model name'
 
 
 ```
@@ -235,9 +237,11 @@ whoami  # show current login user name
 
 ```
 
-####  
+#### pidof
 ```python
-
+pidof crond  # get the crond proccess id
+ps -aux |grep 3423 # verify the pid
+which crond  # view command file location
 
 ```
 
@@ -247,8 +251,45 @@ which ls # check command file location
 
 ```
 
-#### 
+#### ip 
 ```python
+
+ip a   # show ip address
+ip r   # show ip route table
+ip a | grep global   # only show the global line
+
+```
+
+#### wget & curl
+```python
+wget www.google.com  # download webpage file
+wget -P ~/Downloads www.google.com # -P set download dir 
+curl www.google.com  # transfer a url 
+curl -v www.google.com # -v: make the operation more talkative
+
+```
+
+#### tr 
+```python
+cat /etc/passwd | tr a-z A-Z  # translate lowcase to upcase
+cat /etc/passwd | tr [:lower:] [:upper:] 
+-c或——complerment：取代所有不属于第一字符集的字符；
+-d或——delete：删除所有属于第一字符集的字符；
+-s或--squeeze-repeats：把连续重复的字符以单独一个字符表示；
+-t或--truncate-set1：先删除第一字符集较第二字符集多出的字符。
+echo "hello 123 world 456" | tr -d '0-9'   # print hello word, -d: delete set1 '0-9'
+echo aa.,a 1 b#$bb 2 c*/cc 3 ddd 4 | tr -d -c '0-9 \n' # print 1 2 3 4, set1 include '0-9, space, \n'
+echo "thissss is      a text linnnnnnne." | tr -s ' sn' # print this is a text line, set1 include ' space, s, n'
+
+```
+
+#### dd
+```python
+转换和拷贝文件
+if=file 从 file 中读而不是标准输入。
+of=file 写到 file 里去而不是标准输出
+bs=bytes 一次读和写 bytes 字节
+count=blocks 只拷贝输入文件的前 blocks 块
 
 
 ```
@@ -259,30 +300,13 @@ which ls # check command file location
 
 ```
 
-#### 
+#### awk
 ```python
+
+ip a | grep global | awk -F/ '{print$1}' 
 
 
 ```
-
-#### 
-```python
-
-
-```
-
-#### 
-```python
-
-
-```
-
-#### 
-```python
-
-
-```
-
 #### 
 ```python
 
