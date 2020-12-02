@@ -229,11 +229,12 @@ JCPU：以终端的代号区分显示，表示该终端所有相关的进程（p
 
 PCPU：表示cpu执行程序消耗的时间。
 
- WHAT：表示用户正在执行的程序的名称，如果正在执行文本模式命令，则会显示用户环境的名称。
+WHAT：表示用户正在执行的程序的名称，如果正在执行文本模式命令，则会显示用户环境的名称。
 ```
 ```python
 who  # show the login user info
 whoami  # show current login user name
+lastlog 
 
 ```
 
