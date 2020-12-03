@@ -97,7 +97,7 @@ scp andy@172.16.100.23: /usr/data/ . # copy remote host file to local current di
 
 ```
 
-#### mkdir & rmdir & rm & mv
+#### mkdir & rmdir & rm & mv & touch
 ```python
 mkdir andy # create a folder
 mkdir -p andy/andy2/andy3 # create multi-layer folder
@@ -109,7 +109,7 @@ rm -f andy.txt  # force remove a file
 rm -rf folder  # force remove a dir, equal to rmdir 
 mv andy.txt ~/data  # move file 
 mv andy.txt andy2.txt #rename the file
-
+touch andy{0..10}.txt  # create multi file by one line command
 ```
 
 #### history
@@ -192,6 +192,7 @@ output redirection
  andy -s 2>> andy.txt # append the error output to file, 2 stands for output error message
  andy -s &> andy.txt # redirect the error & standard output to file, & stands for output error and standard message
  cat /etc/passwd &>> andy.txt # append the error & standard output to file, & stands for output error and standard message
+ wc -l < /etc/passwd  # input redirection 
  
  
 ```
@@ -366,12 +367,26 @@ find / -type f  # b/d/c/p/l/f	匹配文件类型（后面的字幕字母依次�
 find /tmp/ -name *.doc -o -name *.exel -o -name *.wps   # 从/tmp下找出后缀是wps 或doc 或exel的文件 -o: 代表 'or' 
 
 ```
-#### 
+### quotation mark
 ```python
-
+单引号（''）：转义其中所有的变量为单纯的字符串。
+双引号（""）：保留其中的变量属性，不进行转义处理。
+反引号（``）：把其中的命令执行后返回结果。
+```
+```
+[root@andycentos ~]# name=andy
+[root@andycentos ~]# echo 'this is $name'  # signal quotation mark
+this is $name
+[root@andycentos ~]# echo "this is $name"  # double quotation mark 
+this is andy
+[root@andycentos ~]# unset name     # remove env variable
+[root@andycentos ~]# echo "this is $name"
+this is
+[root@andycentos ~]# users=`cat /etc/passwd | wc -l`  # back quota
+[root@andycentos ~]# echo $users
+47
 
 ```
-
 #### awk
 ```python
 
