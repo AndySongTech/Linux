@@ -440,14 +440,99 @@ hard link:
 -    refer [Vim 的使用](https://github.com/AndySongTech/Linux/blob/main/Vim%20%E7%9A%84%E7%94%A8%E6%B3%95)
 
 
-#### 
+#### User & Group
 ```python
+/etc/passwd：用户基本信息
+/etc/shadow：用户密码信息、过期时间等
+/etc/group：用户组信息
+/etc/gshadow：用户组密码
+/etc/default/useradd：创建用户的默认配置信息
+/etc/skel/：用户家目录模板
+/etc/login.defs：全局用户设定信息
+/etc/passwd： 每行是一个用户，用来记录用户的基本信息，每行的格式
+account:password:UID:GID:GECOS:directory:shell
+
+accout：用户名
+password：用户密码，密码位置默认是x
+UID：用户身份id，用来唯一的标识一个用户
+GID：用户组id，用来在系统中唯一的标识一个用户组（这里指的是其基本组的组ID）
+GECOS：用户描述信息，可以空白，也可以随意写(useradd -c )
+directory：用户家目录
+shell：用户所使用的shell类型
+/bin/bash-->可以登录系统
+/sbin/nologin-->该用户一定无法登录系统
+
+比如
+root   :   x   :    0    :       0       :   newuser  :  /root  :  /bin/bash
+
+用户名    密 码    用户id   用户所在组的id  描述信息    家目录    shell类型   
 
 
+/etc/group
+用户组信息
+linux，用户一定是属于一个组的在linux中，创建用户的时候，会自动创建一个组，组名和组id都和所创建的用户相同,而且，该用户会自动加入到这个组中
+
+andysong:x:1000:
+组成：groupname:password:GID: [user1, user2.....]
+groupname：组名
+password：组密码
+GID：组id
+[user1, user2.....]：改组中的用户列表
+
+用户的基本组(主组)：当前用户具有哪个组的权限
+用户的附加组：用户额外属于的组
+ 主组：gp02
+ 附加组：gp01、gp03
+
+可以登录系统的用户
+ 管理员用户：uid为0的用户
+ 普通用户：就是可以登录系统，但是没有管理员权限的用户
+ 不能登录系统的用户：
+ 系统用户：用来运行一个程序，而不是用来登录系统
+ 
+各类用户的id
+ 管理员用户：0
+ 系统用户：1-999
+ 普通用户：1000-60000（自定义uid最大4294967294）
+
+系统用户的特点
+ 1. 因为不需要登录，所以shell类型通常为/sbin/nologin
+ 2. 系统用户没有家目录
+ 3. 系统用户id通常是小于1000
 ```
 
-#### 
+#### adduser
 ```python
+/etc/default/useradd   #定义创建用户默认选项的文件
+useradd defaults file       # useradd默认文件
+GROUP=100               #表示可创建普通组
+HOME=/home             #用户的家目录建在/home中；用户家目录的默认创建地
+INACTIVE=-1               #是否启用帐号过期停权，-1表示不启用；宽限天数，0及以下数皆为无效数字
+EXPIRE=                   #帐号终止日期，不设置表示不启用；帐号失效日期(如：20081212)
+SHELL=/bin/bash            #所用SHELL的类型；登录后执行的程序
+SKEL=/etc/skel              #用户家目录中的环境文件，默认添加用户的目录默认文件存放位置；也就是说，当我们用adduser添加用户时，用户家目录下的文件，都是从这个目录中复制过去的；
+CREATE_MAIL_SPOOL=yes    #是否创建用户邮件缓冲，yes表示创建
+```
+```
+useradd [options] username
+options:
+-d, --home HOME_DIR：指定用户家目录
+-c, --comment COMMENT：用户说明信息
+-e, --expiredate EXPIRE_DATE：指的账号的过期时间，时间格式 YYYY/MM/DD
+-g, --gid GROUP：指的用户的基本组的组id
+-G, --groups GROUP1[,GROUP2,...[,GROUPN]]]：指的用户的附加组列表
+-u，--uid UID：指的用户的uid
+-m, --create-home：创建用户的时候自动创建用户家目录（默认就已经使用）
+-M：不自动创建用户家目录
+-o, --non-unique：通常和-u一起使用，用来让两个用使用相同的uid
+-r, --system：创建一个系统用户
+-s, --shell SHELL：在创建用户的时候，指定用户的shell类型
+（/bin/bash/,/sbin/nlogin)
+
+adduser andysong  # create a user 
+adduser -e 2021/01/01 andysong # set a expire date for user 
+adduser -g andysong -G group1[,group2,group3] andysong # add user to group 
+adduser -M -r -s /sbin/nologin system_test  # create a system account without home dir, and unable to login 
 
 
 ```
