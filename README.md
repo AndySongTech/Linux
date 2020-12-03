@@ -387,6 +387,134 @@ this is
 47
 
 ```
+
+#### soft link & hard link
+```python
+softlink:
+ln -s source_dir dst_dit
+1.就是相当于win中的快捷方式，基本不占用磁盘空间
+2.删除链接文件，源文件无影响
+3.删除源文件，链接文件失效
+4.修改源文件\链接文件，内容都发生改变
+[root@andycentos ~]# ln -s andy.txt andysong.txt
+[root@andycentos ~]# ll
+lrwxrwxrwx. 1 root root       8 Dec  1 18:32 andysong.txt -> andy.txt
+```
+```
+hard link:
+1.就相当于一个copy的新文件，会占用源文件2倍的磁盘空间
+2.删除链接文件，源文件无影响
+3.删除源文件，链接文件无影响
+4.修改源文件\链接文件，内容都发生改变
+[root@andycentos ~]# ln andy.txt andysong_hard_link.txt
+[root@andycentos ~]# ll
+-rw-r--r--. 2 root root   18509 Dec  1 18:01 andysong_hard_link.txt
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+#### 
+```python
+
+
+```
+
+
+
 #### awk
 ```python
 
