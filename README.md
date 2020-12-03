@@ -291,10 +291,77 @@ if=file 从 file 中读而不是标准输入。
 of=file 写到 file 里去而不是标准输出
 bs=bytes 一次读和写 bytes 字节
 count=blocks 只拷贝输入文件的前 blocks 块
-
+```
+```python
+[root@andycentos ~]# dd if=/dev/zero of=andy.sh count=10 bs=1M
+10+0 records in
+10+0 records out
+root@andycentos ~]# ll -h andy.sh
+-rw-r--r--. 1 root root 10M Dec  1 09:44 andy.sh
 
 ```
 
+#### tar
+```python
+-c: compress
+-x: uncompress
+-v: verbose
+-f: target file name
+-g: gzip
+tar cvf andy.sh.tar andy.sh # tar a file
+gzip andy.sh.tar.gz andy.sh.tar # zip a file
+tar czvf andy.sh.tar.gz  # tar a file and zip
+tar -xzvf andy.sh.tar.gz  # unzip and umcompress a file
+
+```
+
+#### grep
+```python
+-E，--extended-regexp 模式是扩展正则表达式（ERE）
+-i，--ignore-case	忽略大小写
+-n，--line-number	打印行号
+-o，--only-matching	只打印匹配的内容
+-c，--count	只打印每个文件匹配的行数
+-B，--before-context=NUM	打印匹配的前几行
+-A，--after-context=NUM	打印匹配的后几行
+-C，--context=NUM 打印匹配的前后几行
+--color[=WHEN], 匹配的字体颜色
+-v，--invert-match 打印不匹配的行
+```
+```
+忽略大小写：
+[root@andycentos ~]# echo "this is Andy" | grep -i andy  # ignore case
+this is Andy
+[root@andycentos ~]# echo "this is Andy" | grep  andy
+
+只打印匹配的内容：
+[root@andycentos ~]# echo "this is Andy" | grep -o Andy
+Andy
+
+统计匹配的行数：
+[root@andycentos ~]# cat /etc/passwd |grep -c root
+2
+[root@andycentos ~]# cat /etc/passwd |grep  root
+root:x:0:0:root:/root:/bin/bash
+operator:x:11:0:operator:/root:/sbin/nologin
+
+打印不匹配的行：-e: 翻译换行符
+[root@andycentos ~]# echo -e "hello\nthis is andy\nncie to meet you\nsee you " | grep -v 'andy'
+hello
+ncie to meet you
+see you
+
+```
+
+#### find
+```python
+find / -name sshd   # find the file name is sshd in / dir
+find . -name ss?*   # using wildcards to find
+find / -size 1M   # find file size is 1M
+find / -type f  # b/d/c/p/l/f	匹配文件类型（后面的字幕字母依次表示块设备、目录、字符设备、管道、链接文件、文本文件）
+find /tmp/ -name *.doc -o -name *.exel -o -name *.wps   # 从/tmp下找出后缀是wps 或doc 或exel的文件 -o: 代表 'or' 
+
+```
 #### 
 ```python
 
