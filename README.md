@@ -32,11 +32,10 @@ uptime # 查看主机running time
 
 ```
 
-#### man, pwd, touch, clear
+#### man, pwd, clear
 ```python
 man ls # get the help for commands
 pwd  # show the current directory
-touch andy.txt # create a file
 clear # clear screen, or using shortcut 'control+l'
 
 ```
@@ -501,7 +500,7 @@ GID：组id
  3. 系统用户id通常是小于1000
 ```
 
-#### adduser
+#### useradd & userdel & id
 ```python
 /etc/default/useradd   #定义创建用户默认选项的文件
 useradd defaults file  # useradd默认文件
@@ -512,6 +511,7 @@ EXPIRE=        #帐号终止日期，不设置表示不启用；帐号失效日�
 SHELL=/bin/bash    #所用SHELL的类型；登录后执行的程序
 SKEL=/etc/skel  #用户家目录中的环境文件，默认添加用户的目录默认文件存放位置；也就是说，当我们用adduser添加用户时，用户家目录下的文件，都是从这个目录中复制过去的
 CREATE_MAIL_SPOOL=yes  #是否创建用户邮件缓冲，yes表示创建
+
 ```
 ```
 useradd [options] username
@@ -529,41 +529,102 @@ options:
 -s, --shell SHELL：在创建用户的时候，指定用户的shell类型
 （/bin/bash/,/sbin/nlogin)
 
-adduser andysong  # create a user 
-adduser -e 2021/01/01 andysong # set a expire date for user 
-adduser -g andysong -G group1[,group2,group3] andysong # add user to group 
-adduser -M -r -s /sbin/nologin system_test  # create a system account without home dir, and unable to login 
+useradd andysong  # create a user 
+useradd -e 2021/01/01 andysong # set a expire date for user 
+useradd -g andysong -G group1[,group2,group3] andysong # add user to group 
+useradd -M -r -s /sbin/nologin system_test  # create a system account without home dir, and unable to login 
+useradd -r -s /sbin/nologin -u 500 -g dog -G cat user1  # create a system account r, and unable to login, set uid and owner group and additional group
+userdel andy  # delete user
+userdel -r andy  # delete user and delete user's home dir 
+id andy   # view user's uid, gip, groups
+how recovery user's home dir
+ mkdir /home/andy
+ cp /etc/skel/.bash* /home/andy  
+ su - andy  # switch to another account
+
+```
+
+#### passwd
+```python
+passwd [[options] username]  # 如果不指定用户名，那么就是修改当前用户的密码
+options:
+
+--stdin: standard input, 用于在shell脚本中批量设置用户密码
+-l：锁定用户
+-u：解锁用户
+-d：删除用户密码
+-e：让用户密码过期
+
+passwd andy  # set the password for user
+passwd -d andy # remove user's password
+passwd -l andy  # lock user's account
+passwd -u andy  # unlock user's account
+passwd -e 2021/01/01 andy  # set the expired date for account
+echo "123password" | passwd --stdin andy  # 表示给andy用户设置密码123password(andy用户必须存在)，用于在shell脚本中批量设置用户密码
+vim /etc/shadow   # edit user password by vim 
+```
+
+#### groupadd & groupdel
+```python
+groupadd group1  # create a group
+groupdel group1  # delete a group
 
 
 ```
 
-#### 
+#### shadow file
 ```python
+asong:$6$3kNw.d5K9YuiFlWT$ZfcO4jHLSfP3wNI2SOJDSeztyl5RTaLpuopEPZTJzupYAjcIUWsHJv4L2Q6kwmJefl3DyRlSXyNCGpjKqpwpi/::0:99999:7:::
+第一段：用户名：  
+第二段：加密后的密码      
+第三段：上次修改密码举例元年经过的天数1970年1月1日（如果该字段空，意味着该用户密码被禁用）
+第四段：密码最短使用时间（0表示不限制）
+第五段：密码最长有效期（99999表示不限制）（如果第5的值小于第四段，那么用户无法修改自己的密码）
+第六段：密码到期前几天开始发送告警，提示密码即将过去，请立即修改
+第七段：非活动期间，密码到期后的宽限时间（登录系统的时候必须先修改密码，才能登录）
+第八段：密码过期时间（也是举例计算机元年经过的天数）（这里和前面的几个时间没有联系）
+第九段：保留字段
+
+有的时候会发生这样的情况，就是说，你的 root 密码忘记了！要怎么办？重新安装吗？另外， 有的时候是被入侵了， root 的密码被更动过，该如何是好？
+　　这个时候就必须要使用到 /etc/shadow 这个资料了！我们刚刚知道密码是存在这个档案中的， 所以只要你能够以各种可行的方法开机进入 Linux ，例如单人维护模式，或者是以 live CD (KNOPPIX) 来进入 Linux 系统。之后，将硬碟顺利挂载，然后进入 /etc/shadow 这个档案中，将 root 的密码这一栏全部清空！然后再登入 Linux 一次，这个时候 root 将不需要密码 (有的时候需要输入空白字元) 就可以登入了！这个时候请赶快以 passwd 设定 root 密码即可。 
+
+```
+
+#### usermod
+```python
+usermod [options] username
+-g, --gid GROUP: 更 新 使 用 者 新 的 起 始 登 入 群 组 。 群 组 名 须 已 存 在 。
+-G, --groups GROUP1[,GROUP2,...[,GROUPN]]]: 定  义  使 用 者 为 一 堆 groups 的 成 员 。 每 个 群 组 使 用 ,区 格 开 来
+-u, --uid UID: 用 者 ID 值 。必 须 为 唯 一 的 ID 值 
+-s, --shell SHELL: 指 定 新 登 入 shell 。 如 此 栏 留 白 ， 系 统 将 选 用 系 统 预 设 shell 。
+-L, --lock: 锁定用户的密码
+-U ： 解锁用户的密码
+-l, --login NEW_LOGIN ： 变 更 使 用 者 login 时 的 名 称 为 login_name 。
+-e, --expiredate EXPIRE_DATE：加 上 使 用 者 帐 号 停 止 日 期 。 日 期 格 式 为 MM/DD/YY.
+-d, --home HOME_DIR：更 新 使 用 者 新 的 登 入 目 录 。
+-m, --move-home：移动用户家目录至新的位置
+
+usermod -s /sbin/nologin andy   # modify user permission to login to system
+usermod -L andy   # lock user's account
+usermod -U andy   # unlock user's account 
+usermod -l new_name  andy # change andy user's name to new_name
+usermod -e 2021/01/01 andy   # set account expire date for account
+
 
 
 ```
 
-#### 
+#### su 
 ```python
-
-
-```
-
-#### 
-```python
-
-
-```
-
-#### 
-```python
-
-
-```
-
-#### 
-```python
-
+作用：进行切换用户
+格式：su - 目标用户
+su命令和'su -'命令最大的本质区别就是：
+ 前者只是切换了root身份，但Shell环境仍然是普通用户的Shell；而后者连用户和Shell环境一起切换成root身份了。只有切换了Shell环境才不会出现PATH环境变量错误。
+ su切换成root用户以后，pwd一下，发现工作目录仍然是普通用户的工作目录；而用su -命令切换以后，工作目录变成root的工作目录了。
+ 用echo $PATH命令看一下su和su -以后的环境变量有何不同。以此类推，要从当前用户切换到其它用户也一样，应该使用su -命令
+ 
+su andy    # only switch the role
+su - andy  # switch to andy account, and change to andy home dir & shell as well
 
 ```
 
