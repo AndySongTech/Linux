@@ -2,6 +2,7 @@
 
 #### Linux系统中常见的目录名称以及相应内容
 ```python
+/: 根目录
 /boot: 开机所需文件—内核、开机菜单以及所需配置文件等
 /dev: 以文件形式存放任何设备与接口
 /etc: 配置文件
@@ -434,11 +435,10 @@ hard link:
 
 ```
 
-#### 
-```python
+#### vim 
 
+-    refer [Vim 的使用](https://github.com/AndySongTech/Linux/blob/main/Vim%20%E7%9A%84%E7%94%A8%E6%B3%95)
 
-```
 
 #### 
 ```python
