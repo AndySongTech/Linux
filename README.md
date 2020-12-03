@@ -10,7 +10,7 @@
 /bin: 存放单用户模式下还可以操作的命令
 /lib: 开机时用到的函数库，以及/bin与/sbin下面的命令要调用的函数
 /sbin: 开机过程中需要的命令
-/media: 用于挂载设备文件的目录                                                                                 
+/media: 用于挂载设备文件的目录
 /opt: 放置第三方的软件
 /root: 系统管理员的家目录
 /srv: 一些网络服务的数据文件目录
@@ -504,14 +504,14 @@ GID：组id
 #### adduser
 ```python
 /etc/default/useradd   #定义创建用户默认选项的文件
-useradd defaults file       # useradd默认文件
-GROUP=100               #表示可创建普通组
-HOME=/home             #用户的家目录建在/home中；用户家目录的默认创建地
-INACTIVE=-1               #是否启用帐号过期停权，-1表示不启用；宽限天数，0及以下数皆为无效数字
-EXPIRE=                   #帐号终止日期，不设置表示不启用；帐号失效日期(如：20081212)
-SHELL=/bin/bash            #所用SHELL的类型；登录后执行的程序
-SKEL=/etc/skel              #用户家目录中的环境文件，默认添加用户的目录默认文件存放位置；也就是说，当我们用adduser添加用户时，用户家目录下的文件，都是从这个目录中复制过去的；
-CREATE_MAIL_SPOOL=yes    #是否创建用户邮件缓冲，yes表示创建
+useradd defaults file  # useradd默认文件
+GROUP=100      #表示可创建普通组
+HOME=/home     #用户的家目录建在/home中；用户家目录的默认创建地
+INACTIVE=-1    #是否启用帐号过期停权，-1表示不启用；宽限天数，0及以下数皆为无效数字
+EXPIRE=        #帐号终止日期，不设置表示不启用；帐号失效日期(如：20081212)
+SHELL=/bin/bash    #所用SHELL的类型；登录后执行的程序
+SKEL=/etc/skel  #用户家目录中的环境文件，默认添加用户的目录默认文件存放位置；也就是说，当我们用adduser添加用户时，用户家目录下的文件，都是从这个目录中复制过去的
+CREATE_MAIL_SPOOL=yes  #是否创建用户邮件缓冲，yes表示创建
 ```
 ```
 useradd [options] username
