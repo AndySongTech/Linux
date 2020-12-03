@@ -119,7 +119,10 @@ history -d 10 # delete the last 10 commands
 history -c # clear all the commands history of current user
 !2323  # excute the history command by history id 
 !keyworkd # excute the history command by key word
-Cat /etc/profile | grep -i HISTSIZE # 可以修改 history size, 默认只记录1000
+cat /etc/profile | grep -i HISTSIZE # 可以修改 history size, 默认只记录1000
+cat /home/asong/.bash_history # check other user excuted commands history
+sysdig -c root # more power tools for monitor user activity
+install guide: https://github.com/draios/sysdig/wiki/How-to-Install-Sysdig-for-Linux
 
 ```
 #### more & cat & head & tail
@@ -147,7 +150,7 @@ du # show the file size of current dir
 du -s /root # show the total size 
 du -sh /root # -h stands for human readable
 ll -h # show the actual file size, du show the minimal storge unit, start from 4K(if file size is 1.4k, will show 4k by du command)
-
+du -sh /etc
 
 ```
 
@@ -202,7 +205,7 @@ echo "this is andy" | wc -w # displays count of word present in a file
 
 ```
 
-#### w & who & whoami
+#### w & who & whoami & last & lastlog
 ```python
 [root@andycentos ~]# w
  13:04:06 up 2 days,  3:30,  7 users,  load average: 0.61, 0.16, 0.09
@@ -234,7 +237,8 @@ WHAT：表示用户正在执行的程序的名称，如果正在执行文本模�
 ```python
 who  # show the login user info
 whoami  # show current login user name
-lastlog 
+last root # show root user login history
+lastlog  # show the recent login user 
 
 ```
 
