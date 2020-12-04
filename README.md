@@ -629,29 +629,97 @@ su - andy  # switch to andy account, and change to andy home dir & shell as well
 
 ```
 
-#### 
+#### Permission Management
 ```python
+[root@andycentos ~]# ll
+total 9456
+-rw-r--r--. 1 root root     290 May 12  2020 a.txt
+-rw-------. 1 root root    1728 Mar 15  2020 anaconda-ks.cfg
+-rw-r--r--. 1 root root       0 Dec  1 17:33 andy.sh
+Linux中存在用户（owner）、用户组（group）和其他人（others）概念，各自有不同的权限，对于一个文档来说，其权限具体分配如下：
+十位字符表示含义：
+　　第1位：表示文档类型，取值常见的有“d表示文件夹”、“-表示文件”、“l表示软连接”、“s表示套接字”、“c表示字符设备”、“b表示块状设备”等等；
+　　第2-4位：表示文档所有者的权限情况，第2位表示读权限的情况，取值有r、-, r表示没有相应的权限；第3位表示写权限的情况，w表示可写，-表示不可写，第4位表示执行权限的情况，取值有x、-。
+　　第5-7位：表示与所有者同在一个组的用户的权限情况，第5位表示读权限的情况，取值有r、-；第6位表示写权限的情况，w表示可写，-表示不可写，第7位表示执行权限的情况，取值有x、-。
+　　第8-10位：表示除了上面的前2部分的用户之外的其他用户的权限情况，第8位表示读权限的情况，取值有r、-；第9位表示写权限的情况，w表示可写，-表示不可写，第10位表示执行权限的情况，取值有x、-。权限分配中,均是rwx的三个参数组合，且位置顺序不会变化。没有对应权限就用 – 代替。
+
+```
+
+#### chmod 
+```python
+通过字母授权:
+u：表示所有者身份owner（user）
+g：表示给所有者同组用户设置（group）
+o：表示others，给其他用户设置权限
+a：表示all，给所有人（包含ugo部分）设置权限
+如果在设置权限的时候不指定给谁设置，则默认给所有用户设置
+
+chmod u+x g+w o+r andy.txt  # add user execute permission, add group write permission, add other read permission
+chomd -R u+wx /etc/init.d   # -R stands for apply to dir and sub files. 
+
+通过数字授权:
+read = 4
+wirte = 2
+execute = 1
+no permission = 0 
+
+chomod 400 andy.txt  # grant user read permission and group & other hasn't permission
+chomod 777 andy.txt  # grant all permissions to every user
+
+Note: 单独出现2、3的权限数字一般都是有问题的权限
+
+```
+
+#### chown
+```python
+chown andy andy.txt  # change the file's owner to andy
+chown andy:andygroup andy.txt # change the file's owner to andy and group to andygroup
+chown andy: andy.txt # 
+chown -R andy /etc/init.d # change dir owner to andy
+chgrp andy andy.txt  # change file's group to andy
+
+```
+
+#### suid & sgid & file ACL
+```python
+1、SUID（set uid设置用户ID）：限定：只能设置在二进制可执行程序上面。对目录设置无效
+   功能：程序运行时的权限从执行者变更成程序所有者的权限
+2、SGID：限定：既可以给二进制可执行程序设置，也可以对目录设置
+   功能：在设置了SGID权限的目录下建立文件时，新创建的文件的所属组会，继承上级目录的所属组
+SUID属性一般用在可执行文件上，当用户执行该文件时，会临时拥有该执行文件的所有者权限。使用”ls -l” 或者”ll” 命令浏览文件时，如果可执行文件所有者权限的第三位是一个小写的”s”，就表明该执行文件拥有SUID属性。
+SUID: 默认普通用户是没有权限查看 /etc/shadow 目录的。但给命令cat加上s的权限后就可以了。
+[root@andycentos ~]# useradd andy1   # creat a user 
+[root@andycentos ~]# su - andy1      # switch to user 
+[andy1@andycentos ~]$ cat /etc/shadow   # permission denied now
+cat: /etc/shadow: Permission denied
+[andy1@andycentos ~]$ exit          # switch back to root 
+logout
+[root@andycentos ~]# chmod u+s `which cat`   # add s permission to user, 'which cat' is for get the cat file location and `` is back quota(反引号) not sign quotation（单引号）
+[root@andycentos ~]$ ll `which cat`  # you can find the 's' in the below
+-rwsr-xr-x. 1 root root 54160 Oct 31  2018 /bin/cat
+[root@andycentos ~]# su - andy1
+Last login: Wed Dec  2 03:45:31 CST 2020 on pts/1
+[andy1@andycentos ~]$ cat /etc/shadow    # now have the permission 
+root:$6$EI8WFXXLkIXl/jV1$NDK9Uy51/tnRq4Em0.xfZLj0lrLOyM1qcJ1r682ojfc.9FYFUCWVsNc82mphkKnu/3wmidB6hViiEhehdaoIs1::0:99999:7:::
+bin:*:17834:0:99999:7:::
+
+SGID: 新创建的文件的所属组会，继承上级目录的所属组
+[root@andycentos ~]# mkdir test
+[root@andycentos ~]# ll -d test/
+drwxr-xr-x. 2 root root 6 Dec  2 04:11 test/
+[root@andycentos ~]# chmod g+s test
+[root@andycentos ~]# chown :andy1 test
+[root@andycentos ~]# touch test/test.txt
+[root@andycentos ~]# ll test/test.txt
+-rw-r--r--. 1 root andy1 0 Dec  2 04:14 test/test.txt
+
+SBIT: 对于设置sbit权限的文件，用户只能删除自己创建的文件，无法删除其他用户的文件, 对目录/tmp添加sbit权限，删除文件的时候显示拒绝操作
+
+chmod o+b /tmp  # add sbit to /tmp dir
 
 
 ```
 
-#### 
-```python
-
-
-```
-
-#### 
-```python
-
-
-```
-
-#### 
-```python
-
-
-```
 
 #### 
 ```python
