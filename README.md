@@ -328,7 +328,7 @@ root@andycentos ~]# ll -h andy.sh
 
 ```
 
-#### tar
+#### tar & gzip
 ```python
 -c: compress
 -x: uncompress
@@ -339,6 +339,7 @@ tar cvf andy.sh.tar andy.sh # tar a file
 gzip andy.sh.tar.gz andy.sh.tar # zip a file
 tar czvf andy.sh.tar.gz  # tar a file and zip
 tar -xzvf andy.sh.tar.gz  # unzip and umcompress a file
+tar xvf test.tar.gz -C /tmp   # choose the dst dir 
 
 ```
 
