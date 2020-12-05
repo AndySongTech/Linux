@@ -654,7 +654,7 @@ o：表示others，给其他用户设置权限
 a：表示all，给所有人（包含ugo部分）设置权限
 如果在设置权限的时候不指定给谁设置，则默认给所有用户设置
 
-chmod u+x g+w o+r andy.txt  # add user execute permission, add group write permission, add other read permission
+chmod u+x g+w o-r andy.txt  # add user execute permission, add group write permission, remove other read permission
 chomd -R u+wx /etc/init.d   # -R stands for apply to dir and sub files. 
 
 通过数字授权:
@@ -717,13 +717,50 @@ SBIT: 对于设置sbit权限的文件，用户只能删除自己创建的文件�
 
 chmod o+b /tmp  # add sbit to /tmp dir
 
+ALC: 对特定用户和特定文件进行权限控制
+
+setfacl -m u:andy1:r-- andy.txt # allow user andy1 has read permission
+setfacl -m u:andy1:rw- andy.txt
+setfacl -m u:andy1:--- andy.txt
+getfacl andy.txt   # view the permission
+setfacl -R -m u:andy1:rwx /etc/  # set acl for a dir 
+setfacl -x u:andy1 andy.txt  # remove signal user's permission
+setfacl -b andy.txt   # remove all the acl from file 
+
 
 ```
 
 
-#### 
+#### sudo
 ```python
+问题：reboot、shutdown、init、halt、user管理，在普通用户身份上都是操作不了，但是有些特殊的情况下又需要有执行权限。又不可能让root用户把自己的密码告诉普通用户，这个问题该怎么解决？
+可以使用sudo（switch user do）命令来进行权限设置。sudo可以让管理员（root）事先定义某些特殊命令谁可以执行。默认sudo中是没有除root之外用户的规则，要想使用则先配置sudo。
+sudo配置文件：/etc/sudoers 该文件默认只读，不允许修改，因此不能直接修改。可以通过“visudo”，打开之后其使用方法和vim一致。
+[root@andycentos ~]# visudo    # 打开sudoers, 100gg 跳转到100行（需要改的内容大概在文本的100行左右）
+root    ALL=(ALL)       ALL
+andysong        ALL=(ALL)       /usr/bin/cat,/usr/sbin/useradd       # 赋予andysong普通用户可以使用sudo cat 和 sudo useradd 两个命令
+test1   ALL=(ALL)    /usr/bin/cat
 
+root: 表示用户名，如果是用户组，则可以写成“%组名”
+ALL：表示允许登录的主机（地址白名单), 这里表示任何主机（from any ip）
+(ALL)：表示以谁的身份执行，ALL表示root身份
+ALL：表示当前用户可以执行的命令，多个命令可以使用“,”分割
+
+[root@andycentos ~]# which cat   # find cat command file location
+/usr/bin/cat
+
+[root@andycentos ~]# su - andysong   # switch to andysong to run 'sudo cat '
+Last login: Wed Dec  2 21:04:09 CST 2020 on :0
+[andysong@andycentos ~]$ sudo cat /etc/shadow    # view user password file， general user don't have permission to check this file
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for andysong:             # type user andysong login password not root's. 
 
 ```
 
