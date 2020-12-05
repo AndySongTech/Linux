@@ -760,7 +760,7 @@ Administrator. It usually boils down to these three things:
     #2) Think before you type.
     #3) With great power comes great responsibility.
 
-[sudo] password for andysong:             # type user andysong login password not root's. 
+[sudo] password for andysong:             # login password for andysong not root. 
 
 ```
 
