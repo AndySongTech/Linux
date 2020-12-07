@@ -906,14 +906,69 @@ gvremove andy   #删除券组
 pvremove /dev/sdc /dev/sdd  #删除物理券
 
 ```
-#### 
+#### lsof
 ```python
+lsof命令用于查看你进程打开的文件，打开文件的进程，进程打开的端口(TCP、UDP)
+-i<条件>：列出符合条件的进程。（4、6、协议、:端口、 @ip ）
+[root@andycentos ~]# lsof -i :22
+COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+sshd    7365 root    3u  IPv4  42553      0t0  TCP *:ssh (LISTEN)
+sshd    7365 root    4u  IPv6  42574      0t0  TCP *:ssh (LISTEN)
+sshd    9297 root    3u  IPv4  83146      0t0  TCP andycentos:ssh->gateway:65139 (ESTABLISHED)
+sshd    9539 root    3u  IPv4  94689      0t0  TCP andycentos:ssh->gateway:51821 (ESTABLISHED)
 
 
 ```
 
 
 
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
+
+#### 
+```python
+
+
+```
 #### awk
 ```python
 
