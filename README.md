@@ -853,21 +853,55 @@ swapoff -a # 关闭swap挂载
 PE（physical extents）  : PV物理卷中可以分配的最小存储单元，PE的大小是可以指定的，默认为4MB
 LE（logical extent）  : LV逻辑卷中可以分配的最小存储单元，在同一个卷组中，LE的大小和PE是相同的，并且一一对应
                      
-                  物理卷管理                      	卷组管理                         	逻辑卷管理                                
-  扫描              pvscan                	        vgscan           	               lvscan                     
-  建立             pvcreate	                      vgcreate	                        lvcreate
-  显示             pvdisplay	                     vgdisplay	                       lvdisplay
-  删除             pvremove	                      vgremove	                        lvremove
-  扩展                                            vgextend	                        lvextend
-  缩小                                            vgreduce	                        lvreduce
+                  物理卷管理           卷组管理                逻辑卷管理                                
+  扫描              pvscan            vgscan           	     lvscan                     
+  建立             pvcreate	          vgcreate	              lvcreate
+  显示             pvdisplay	         vgdisplay	             lvdisplay
+  删除             pvremove	          vgremove	              lvremove
+  扩展                                vgextend	              lvextend
+  缩小                                vgreduce	              lvreduce
 
+部署逻辑卷：
 pvcreate /dev/sdc /dev/sdd  # 让两块硬盘支持LVM技术
 gvcreate andy /dev/sdc /dev/sdd  # 创建券组andy
-lvcreate -n andy1 
+lvcreate -n andy_lv -L 500M andy  # 创建逻辑券andy_lv, 并从券组andy中划分500M空间
+mkfs.ext4 /dev/andy/andy_lv  # 格式化LV, 文件系统类型为ext4
+or mkfs.xfs /dev/andy/andy_lv   # 格式化LV, 文件系统类型为xfs
+mount /dev/andy/andy_lv /data # 挂载
+df -h  # 查看挂载信息
+
+扩展ext4逻辑券:
+umount /data  # 需要先卸载逻辑券
+lvextend -L 5G /dev/andy/andy_lv  # 扩展到5G空间
+e2fsck -f /dev/andy/andy_lv  # 检测磁盘的完整性
+resizefs /dev/andy/andy_lv  # 重置磁盘空间
+mount /dev/andy/andy_lv /date 
+df -h
 
 
+扩展xfs逻辑券： 
+1. xfs格式只能扩容，不能减小！
+2. xfs格式无需卸载，支持在线扩容
+lvcreate -n andy_xfs_lv -L 500M andy  # 创建一个逻辑券
+mkfs.xfs andy_xfs_lv   # 格式化LV, 文件系统类型为xfs
+mount /dev/andy/andy_xfs_lv /data  #挂载
+df -h     #查看挂载信息
+lvextend -L 5G /dev/andy/andy_xfs_lv # 扩展到5G空间
 
+缩小逻辑券： 
+相较于扩容逻辑卷，在对逻辑卷进行缩容操作时，其丢失数据的风险更大。所以在生产环境中执行相应操作时，一定要提前备份好数据。另外Linux系统规定，在对LVM
+逻辑卷进行缩容操作之前，要先检查文件系统的完整性（当然这也是为了保证我们的数据安全）。在执行缩容操作前记得先把文件系统卸载掉。
+umount /data  # 先卸载挂载
+e2fsck -f /dev/andy/andy_lv  #检测磁盘的完整性
+resizefs /dev/andy/andy_lv 200M  # 缩小到200M
+mount /dev/andy/andy_lv /data  # 重新挂载
+df -h   # 查看挂载信息
 
+删除逻辑券：
+umount /data   #先卸载挂载
+lvremove /dev/andy/andy_lv  # 删除逻辑券
+gvremove andy   #删除券组
+pvremove /dev/sdc /dev/sdd  #删除物理券
 
 ```
 #### 
