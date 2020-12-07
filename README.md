@@ -834,14 +834,16 @@ mount /dev/sdb1 /data  # 挂载磁盘分区
 df -h  # 查看挂载是否成功
 echo "/dev/sdb1 /data ext4 defaults 0 0" >> /etc/fstab  # 写入到配置文件中，开机自动挂载（2个0分别表示：不备份，不检测）
 
-```
-添加swap分区
+添加swap分区：
 fdisk /dev/sdb2 # create new swap partition
 mkswap /dev/sdb2  # 把建好的分区格式为swap
 swapon /dev/sdb2 # 把SWAP分区设备正式挂载到系统中
 free -h  # 查看是否挂载成功
 echo "/dev/sdb2 swap swap defaults 0 0" >> /etc/fstab  # 写入到配置文件中，开机自动挂载（2个0分别表示：不备份，不检测）
 swapoff -a # 关闭swap挂载
+
+```
+
 
 
 #### LVM：logical volume management
