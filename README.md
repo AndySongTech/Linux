@@ -835,14 +835,27 @@ echo "/dev/sdb2 swap swap defaults 0 0" >> /etc/fstab  # 写入到配置文件�
 swapoff -a # 关闭swap挂载
 
 
-#### LVM：logical Volume Management
+#### LVM：logical volume management
 ```python
-物理存储介质（The physical media）:LVM存储介质可以是磁盘分区，整个磁盘，RAID阵列或SAN磁盘，设备必须初始化为LVM物理卷，才能与LVM结合使用
-物理卷PV（physical volume）  ：物理卷就是LVM的基本存储逻辑块，但和基本的物理存储介质（如分区、磁盘等）比较，却包含有与LVM相关的管理参数,创建物理卷它可以用硬盘分区，也可以用硬盘本身；
-卷组VG（Volume Group）  ：一个LVM卷组由一个或多个物理卷组成 
-逻辑卷LV（logical volume）  ：LV建立在VG之上，可以在LV之上建立文件系统
-PE（physical extents）  ：PV物理卷中可以分配的最小存储单元，PE的大小是可以指定的，默认为4MB
-LE（logical extent）  ： LV逻辑卷中可以分配的最小存储单元，在同一个卷组中，LE的大小和PE是相同的，并且一一对应
+物理存储介质（The physical media）: LVM存储介质可以是磁盘分区，整个磁盘，RAID阵列或SAN磁盘，设备必须初始化为LVM物理卷，才能与LVM结合使用
+物理卷PV（physical volume）  : 物理卷就是LVM的基本存储逻辑块，但和基本的物理存储介质（如分区、磁盘等）比较，却包含有与LVM相关的管理参数,创建物理卷它可以用硬盘分区，也可以用硬盘本身；
+卷组VG（Volume Group）  : 一个LVM卷组由一个或多个物理卷组成 
+逻辑卷LV（logical volume）  : LV建立在VG之上，可以在LV之上建立文件系统
+PE（physical extents）  : PV物理卷中可以分配的最小存储单元，PE的大小是可以指定的，默认为4MB
+LE（logical extent）  : LV逻辑卷中可以分配的最小存储单元，在同一个卷组中，LE的大小和PE是相同的，并且一一对应
+                     
+                  物理卷管理                      	卷组管理                         	逻辑卷管理                                
+  扫描              pvscan                	        vgscan           	               lvscan                     
+  建立             pvcreate	                      vgcreate	                        lvcreate
+  显示             pvdisplay	                     vgdisplay	                       lvdisplay
+  删除             pvremove	                      vgremove	                        lvremove
+  扩展                                            vgextend	                        lvextend
+  缩小                                            vgreduce	                        lvreduce
+
+pvcreate /dev/sdc /dev/sdd  # 让两块硬盘支持LVM技术
+gvcreate andy /dev/sdc /dev/sdd  # 创建券组andy
+lvcreate -n andy1 
+
 
 
 
