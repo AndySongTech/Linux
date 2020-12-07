@@ -765,14 +765,86 @@ Administrator. It usually boils down to these three things:
 
 ```
 
-#### 
+#### Disk Management
 ```python
+fdisk -l  # list the partition tabel
+ls /dev/sd*. # list the disk drive
+fdisk /dev/sdb # 进入fdisk分区管理界面
+                                  
+m： 查看全部可用的参数                                                                                                                     
+n： 添加新的分区
+d： 删除某个分区信息
+l： 列出所有可用的分区类型
+t:  改变某个分区的类型
+p:  查看分区表信息
+w:  保存并退出
+q:  不保存直接退出
 
+[root@andycentos ~]# fdisk /dev/sdb
+Welcome to fdisk (util-linux 2.23.2).
+
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+Device does not contain a recognized partition table
+Building a new DOS disklabel with disk identifier 0x52997d99.
+
+Command (m for help): n                   #创建一个新的分区
+Partition type:
+   p   primary (0 primary, 0 extended, 4 free)
+   e   extended
+Select (default p):                       #默认主分区，直接回车
+Using default response p
+Partition number (1-4, default 1):         #默认为第一个分区编号，直接回车
+First sector (2048-41943039, default 2048):   #默认第一个扇区开始位置，直接回车
+Using default value 2048
+Last sector, +sectors or +size{K,M,G} (2048-41943039, default 41943039): +100M   #选择大小，前面要使用加号
+Partition 1 of type Linux and of size 100 MiB is set
+
+Command (m for help): P                   #查看已经分好的磁盘
+
+Disk /dev/sdb: 21.5 GB, 21474836480 bytes, 41943040 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0x52997d99
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdb1            2048      206847      102400   83  Linux
+
+Command (m for help): w                        #w退出保存，q退出不保存
+The partition table has been altered!
+
+Calling ioctl() to re-read partition table.
+Syncing disks.
+
+mkfs.ext4 /dev/sdb1   # 新的磁盘分区使用之前必须先格式化
+mkdir /data    # 创建挂载目录
+mount /dev/sdb1 /data  # 挂载磁盘分区
+df -h  # 查看挂载是否成功
+echo "/dev/sdb1 /data ext4 defaults 0 0" >> /etc/fstab  # 写入到配置文件中，开机自动挂载（2个0分别表示：不备份，不检测）
 
 ```
+添加swap分区
+fdisk /dev/sdb2 # create new swap partition
+mkswap /dev/sdb2  # 把建好的分区格式为swap
+swapon /dev/sdb2 # 把SWAP分区设备正式挂载到系统中
+free -h  # 查看是否挂载成功
+echo "/dev/sdb2 swap swap defaults 0 0" >> /etc/fstab  # 写入到配置文件中，开机自动挂载（2个0分别表示：不备份，不检测）
+swapoff -a # 关闭swap挂载
 
-#### 
+
+#### LVM：logical Volume Management
 ```python
+物理存储介质（The physical media）:LVM存储介质可以是磁盘分区，整个磁盘，RAID阵列或SAN磁盘，设备必须初始化为LVM物理卷，才能与LVM结合使用
+物理卷PV（physical volume）  ：物理卷就是LVM的基本存储逻辑块，但和基本的物理存储介质（如分区、磁盘等）比较，却包含有与LVM相关的管理参数,创建物理卷它可以用硬盘分区，也可以用硬盘本身；
+卷组VG（Volume Group）  ：一个LVM卷组由一个或多个物理卷组成 
+逻辑卷LV（logical volume）  ：LV建立在VG之上，可以在LV之上建立文件系统
+PE（physical extents）  ：PV物理卷中可以分配的最小存储单元，PE的大小是可以指定的，默认为4MB
+LE（logical extent）  ： LV逻辑卷中可以分配的最小存储单元，在同一个卷组中，LE的大小和PE是相同的，并且一一对应
+
+
 
 
 ```
