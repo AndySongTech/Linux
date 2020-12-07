@@ -765,6 +765,15 @@ Administrator. It usually boils down to these three things:
 
 ```
 
+#### mount
+```python
+
+mount /dev/sdb1 /usr/data # mount /dev/sdb1 on /urs/data
+unmout /urs/data  # unmout /usr/data
+echo "/dev/sdb1 /part ext4 defaults 0 0" >> /etc/fstab  # mount sdb1 when the machine start
+
+```
+
 #### Disk Management
 ```python
 fdisk -l  # list the partition tabel
