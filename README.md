@@ -920,12 +920,73 @@ sshd    9539 root    3u  IPv4  94689      0t0  TCP andycentos:ssh->gateway:51821
 
 ```
 
-
-
-#### 
+#### rpm 
 ```python
+这是一个数据库管理工具，可以通过读取数据库，判断软件是否已经安装，如果已经安装可以读取出来所有文件的所在位置等，并可以实现删除这些文件。
+rpm：RPM is Redhat Package Manager（递归缩写）
+rpm可以完成的操作
+  安装软件
+  卸载软件
+  查询软件信息
+  升级、降级
+  检验
+  打包程序
+rpm仅仅能管理符合rpm格式的程序包，不能管理源码格式的程序
+程序的格式
+1)源码格式的程序：都是以压缩方式呈现的(后缀都是.tar.gz|bz2)
+2)rpm格式的程序：这都是编译以后的程序 (后缀都是.rpm)
 
+安装软件方式有如下几种
+方式1：编译安装
+将源码程序按照需求进行先编译，后安装
+缺点：安装过程复杂，而且很慢
+优点：安装过程可控，真正的按需求进行安装（安装位置、安装的模块都可以选择）
 
+方式2：rpm安装（用rpm来安装rpm后缀的安装包）
+优点：安装和卸载过程非常方便
+缺点：安装过程不可控（安装位置，安装那些功能模块）
+rpm包的依赖关系非常复杂
+
+方式3：yum安装
+yum安装，其实就是自动分析rpm包的依赖关系，然后按照需要的顺序依次安装
+
+方式4：绿色安装, 放到系统可以直接运行
+
+安装rpm包： 
+格式：rpm -ivh  软件包名
+选项
+-i：安装软件
+-v：显示安装过程
+-h：用#表示安装进度（# 2%)
+-vv：显示更详细的安装过程信息
+-vvv：显示更更详细的安装过程信息
+
+rpm -ivh htop.rpm  # install htop package
+
+卸载rpm包：
+rpm -e htop   # uninstall htop, here just need type app name not rpm file name 
+
+rpm包查询：
+-q：查看一个已经安装的软件
+-a：查看所有已经安装的软件all
+-l：显示软件安装完成以后生成文件列表（所有文件）list
+-i：查看软件包的相关信息 info
+-d：显示该软件所生成的说明性质的文档列表docfiles
+-c：查看软件所生成的配置文件列表configfiles
+-f: 查看文件是什么软件生成的
+--scripts:查看软件相关的脚本
+rpm -q httpd  # check if the httpd is installed 
+rpm -qa  # list all the installed packages 
+rpm -ql httpd # show the package file list 
+rpm -qi httpd # show package info 
+rpm -q --scripts httpd  # view the package configfiles
+rpm -qa | wc -l # show how many appp is installed (similar with: yum list installed | wc -l)
+rpm -qf /usr/bin/ls  # check who generate the /usr/bin/ls file
+rpm -qf `which httpd` # the same function like above
+```
+[root@andycentos ~]# rpm -qf `which httpd`
+httpd-2.4.6-97.el7.centos.x86_64
+```
 ```
 
 #### 
