@@ -983,14 +983,44 @@ rpm -q --scripts httpd  # view the package configfiles
 rpm -qa | wc -l # show how many appp is installed (similar with: yum list installed | wc -l)
 rpm -qf /usr/bin/ls  # check who generate the /usr/bin/ls file
 rpm -qf `which httpd` # the same function like above
-```
-[root@andycentos ~]# rpm -qf `which httpd`
-httpd-2.4.6-97.el7.centos.x86_64
-```
+  [root@andycentos ~]# rpm -qf `which httpd`
+  httpd-2.4.6-97.el7.centos.x86_64
+
+
+升级和安装rpm包： 
+-U：升级或安装软件
+-F：仅仅是升级操作
+rpm -Fvh ipset-6.38-2.el7.x86_64.rpm 
+rpm -Uvh ipset-6.38-2.el7.x86_64.rpm # 升级
+
 ```
 
-#### 
+#### yum 
 ```python
+yum的工作原理：
+1. 需要首先创建一个yum仓库（rpm包仓库、软件仓库）
+  a. 仓库其实就是一个目录
+  b. 仓库中存放的是rpm包
+  c. 仓库中还保存了一个文件，文件中记录了该仓库中所有rpm包的元数据信息
+  d. 元数据信息包括:软件名,软件版本,软件是否已经安装,软件的依赖关系
+2. 用yum来从仓库中找软件并进行安装，所有的依赖关系都会被自动安装
+
+yum的repo:
+本地：将本地的一个目录做成yum仓库，只有当前系统可以使用
+网络：通过网络将服务器上的一个目录作为yum仓库，网络中的全部主机都可以用
+使用yum仓库的方式，就是修改yum的配置文件
+yum的配置文件：
+ 主：/etc/yum.conf
+ 子：/etc/yum.repos.d/*.repo
+ /etc/yum.conf文件
+ cachedir=/var/cache/yum/$basearch/$releasever
+ 指定缓存文件的保存位置,默认：/var/cache/yum/x86_64/7/
+ keepcache=0
+ 指定是否保留缓存文件
+
+用yum安装软件过程中会从yum仓库下载并缓存多个资源
+1）会将yum仓库的元数据文件缓存到配置文件所指定的路径中
+2）会将要安装的软件及其依赖的软件一并缓存到配置文件指定的目录中
 
 
 ```
