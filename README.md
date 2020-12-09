@@ -61,6 +61,7 @@ lvextend -r centos/root /dev/sda2  # r stand for resize
 ```python
 free -h # 查看内存使用情况， -h 代表human readable
 top # 查看CPU使用情况, 按’z‘ 彩色显示进程, 'c' display absolute path of running pro
+ htop is much powerful than top (Install by: yum install -y htop)
 top -u root #查看root用户使用的进程
 ps -aux # 以BSD语法显示正在运行的进程
 ps -ef # 以标准语法显示正在运行的进程
@@ -162,6 +163,8 @@ tail -vn 5 andy.txt # display the tail 5 lines
 kill 2323 # kill pid process
 kill -15 2323 # 15 is default option, just send the kill order, if the pid is using the call will fail
 kill -9 2323 # force kill pid process
+ps -aux | grep 18743  # find the pid
+
 
 ```
 
@@ -1009,6 +1012,7 @@ yum的repo:
 本地：将本地的一个目录做成yum仓库，只有当前系统可以使用
 网络：通过网络将服务器上的一个目录作为yum仓库，网络中的全部主机都可以用
 使用yum仓库的方式，就是修改yum的配置文件
+
 yum的配置文件：
  主：/etc/yum.conf
  子：/etc/yum.repos.d/*.repo
@@ -1017,10 +1021,49 @@ yum的配置文件：
  指定缓存文件的保存位置,默认：/var/cache/yum/x86_64/7/
  keepcache=0
  指定是否保留缓存文件
+ 
+[root@andycentos ~]# cat /etc/yum.conf
+[main]
+cachedir=/var/cache/yum/$basearch/$releasever
+keepcache=0
+debuglevel=2
+logfile=/var/log/yum.log
+exactarch=1
+obsoletes=1
+gpgcheck=1
+plugins=1
+installonly_limit=5
+bugtracker_url=http://bugs.centos.org/set_project.php?project_id=23&ref=http://bugs.centos.org/bug_report_page.php?category=yum
+distroverpkg=centos-release
 
+
+#  This is the default, if you make this bigger yum won't see if the metadata
+# is newer on the remote and so you'll "gain" the bandwidth of not having to
+# download the new metadata and "pay" for it by yum not having correct
+# information.
+# It is esp. important, to have correct metadata, for distributions like
+# Fedora which don't keep old packages around. If you don't like this checking
+# interupting your command line usage, it's much better to have something
+# manually check the metadata once an hour (yum-updatesd will do this).
+# metadata_expire=90m
+
+# PUT YOUR REPOS HERE OR IN separate files named file.repo
+# in /etc/yum.repos.d
 用yum安装软件过程中会从yum仓库下载并缓存多个资源
 1）会将yum仓库的元数据文件缓存到配置文件所指定的路径中
 2）会将要安装的软件及其依赖的软件一并缓存到配置文件指定的目录中
+
+yum install -y htop  # install htop
+yum reinstall -y htop # reinstall htop
+yum update htop   # update htop on system
+yum upgrade htop  # upgrade htop into the account 
+yum list   # list all packages
+yum list installed # list all installed packages 
+yum list installed | wc -l  # statistic the installed package number
+yum remove htop -y # rmove htop
+yum search http*  # search a package name
+
+
 
 
 ```
