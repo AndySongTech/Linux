@@ -1049,22 +1049,61 @@ distroverpkg=centos-release
 
 # PUT YOUR REPOS HERE OR IN separate files named file.repo
 # in /etc/yum.repos.d
-用yum安装软件过程中会从yum仓库下载并缓存多个资源
+'用yum安装软件过程中会从yum仓库下载并缓存多个资源
 1）会将yum仓库的元数据文件缓存到配置文件所指定的路径中
 2）会将要安装的软件及其依赖的软件一并缓存到配置文件指定的目录中
+配置文件的构成：创建在 /etc/yum.repos.d/ 目录下，文件格式必须是.repo 
+[repo_id]      <<< 指定yum仓库的id，可以随便写，但是中间不能有空格
+name=xxx        <<< 指定yum仓库的名称，可以随便写
+enabled=0|1     <<< 指定是否使用该yum仓库，0表示不使用；1表示使用
+gpgcheck=0|1    <<< 指定是否对rpm包做完整性和来源合法性验证，0表示不做验证；1表示必须做验证
+gpgkey=         <<< 指定公钥文件（如果gpgcheck=1，那么该项不能省略）
+baseurl=        <<< 指定yum仓库的url
+ 注意：在指定yum仓库的时候，其实不是指向rpm包的目录，而是执行repodata所在目录
+ 本地yum仓库: file:///repo
+ 网络yum仓库:
+    官方：http://mirror.centos.org/centos/$releasever/os/$basearch/
+    阿里云：https://mirrors.aliyun.com/epel/7Server/x86_64/
+andy.repo 配置文件实例： 
+在配置自定义的repo前，请一定记得备份原本的repo文件
+  mkdir -p /etc/yum.repos.d/backup 
+  mv /etc/yum.repos.d/*.repo /etc/yum.repos.d/bakcup
+vim andy.repo   # 编辑repo文件
+[local_repo]   # 本地repo
+name = andy_local_repo
+enable = 1
+baseurl = file:///repo
+gpgcheck = 0
+cost = 1  # 1的优先级最高，默认是1000. 所以yum会优先查询本地repo,找不到安装文件，回去查找下个repo
 
-yum install -y htop  # install htop
+[remote_repo]   #远程repo
+name = aliyun
+enable = 1
+baseurl =https://mirrors.aliyun.com/epel/7Server/x86_64/
+gpgcheck = 0
+cost = 9
+
+执行yum命令检测结果：
+yum clean all    # 清空yum缓存的全部数据
+yum repolist     # 检查yum仓库中有多少个可用的rpm包'
+
+
+yum install -y htop httpd # install htop and httpd
+yum remove htop -y # remove htop
 yum reinstall -y htop # reinstall htop
 yum update htop   # update htop on system
 yum upgrade htop  # upgrade htop into the account 
 yum list   # list all packages
 yum list installed # list all installed packages 
 yum list installed | wc -l  # statistic the installed package number
-yum remove htop -y # rmove htop
+yum list available 
 yum search http*  # search a package name
-
-
-
+yum grouplist   # 查看系统中的全部的包组
+yum groupinfo group_name  # 查看指定包组的信息（包组的作用、包含的软件）
+yum groupinstall group_name  # 安装指定的包组
+yum groupremove group_name   # 卸载指定的包组
+yum groupinstall "X Window System"  -y    # 安装图形化界面
+yum groupinstall "GNOME Desktop" "Graphical Administration Tools" -y # 同上
 
 ```
 
