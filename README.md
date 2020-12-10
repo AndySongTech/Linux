@@ -1109,17 +1109,18 @@ yum groupinstall "GNOME Desktop" "Graphical Administration Tools" -y # 同上
 
 #### samba
 ```python
+Smb主要作为网络通信协议, 是基于cs架构, 完成Linux与windows之间的数据共享；linux与linux之间共享用NFS
 yum install -y samba   # install samba
+systemctl status smb   # check the samba status
 vim /etc/samba/smb.conf   # edit the samba config file
 add below config to the file
   '[andy]
         comment = Andy Directories
         path = /andy_shared
-        valid users = %S, %D%w%S
-        browseable = No
         read only = No
         public = Yes '
 mkdir /andy_shared   # create the shared dir
+chmod -R a+rw /andy_shared/   # grant user read and write permission for folder
 useradd andy_smb  # ceate the user for access shared folder  
 [root@andycentos ~]# pdbedit -a -u andy_smb  
    # manage the SAM(samba access management) database (Database of Samba Users)， -a: add user to database, -u: user name  
@@ -1148,23 +1149,42 @@ Password must change: never
 Last bad password   : 0
 Bad password count  : 0
 Logon hours         : FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFthx
+[root@andycentos ~]# setenforce 0     # modify the mode SELinux is running in, 0 is in permissive mode, 1 is in enforcing mode
+[root@andycentos ~]# systemctl stop firewalld   # turn of the firewall
+[root@andycentos ~]# systemctl restart smb      # restart the smb service 
+access by Windows: \\172.168.x.x.
+access by MacOS： smb://172.168.x.x
 
-[root@andycentos ~]# setenforce 0
-[root@andycentos ~]# systemctl stop firewalld
-[root@andycentos ~]# systemctl restart smb
+```
+
+#### vsftp
+```python
+FTP服务器（File Transfer Protocol Server）是在互联网上提供文件存储和访问服务的计算机，它们依照FTP协议提供服务。
+FTP（File Transfer Protocol: 文件传输协议）作用： Internet 上用来传送文件的协议
+VSFTP是一个基于GPL发布的类Unix系统上使用的FTP服务器软件，它的全称是Very Secure FTP 从此名称可以看出来，编制者的初衷是代码的安全。
+特点：它是一个安全、高速、稳定的FTP服务器
+模式： C/S 模式
+端口：20(传数据)， 21（传指令）
+
+ftp主动和被动模式，都是相对于的FTP server 端来判断的，如果server 去连接client 开放的端口，说明是主动的，相反，如果client去连接server开放的端口，则是被动的。
+两种模式的比较：
+（1）PORT（主动）模式模式只要开启服务器的21和20端口，而PASV（被动）模式需要开启服务器大于1024所有tcp端口和21端口。
+（2）从网络安全的角度来看的话似乎ftp PORT模式更安全，而ftp PASV更不安全，那么为什么RFC要在ftp PORT基础再制定一个ftp PASV模式呢？其实RFC制定ftp PASV模式的主要目的是为了数据传输安全角度出发的，因为ftp port使用固定20端口进行传输数据，那么作为黑客很容使用sniffer等探嗅器抓取ftp数据，这样一来通过ftp PORT模式传输数据很容易被黑客窃取，因此使用PASV方式来架设ftp server是最安全绝佳方案。(默认是被动工作模式)
+
+yum install -y vsftp  # install vsftp 
+
 
 
 ```
 
-#### 
+#### deploy a file index by Apache
 ```python
-
-
-```
-
-#### 
-```python
-
+yum intstall -y httpd   # install httpd
+cp -r /files /var/www/html/  # copy file to apache dir
+vim /etc/httpd/conf.d/welcome.conf   # annotation welcome page
+ :8, 22 s/^/#/g   # annotate all the contents
+systemctl restart httpd
+web page is like: https://mirrors.aliyun.com/epel/7Server/x86_64/
 
 ```
 
