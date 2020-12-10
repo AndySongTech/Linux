@@ -1172,12 +1172,44 @@ ftp主动和被动模式，都是相对于的FTP server 端来判断的，如果
 （2）从网络安全的角度来看的话似乎ftp PORT模式更安全，而ftp PASV更不安全，那么为什么RFC要在ftp PORT基础再制定一个ftp PASV模式呢？其实RFC制定ftp PASV模式的主要目的是为了数据传输安全角度出发的，因为ftp port使用固定20端口进行传输数据，那么作为黑客很容使用sniffer等探嗅器抓取ftp数据，这样一来通过ftp PORT模式传输数据很容易被黑客窃取，因此使用PASV方式来架设ftp server是最安全绝佳方案。(默认是被动工作模式)
 
 yum install -y vsftp  # install vsftp 
+more /etc/vsftpd/vsftpd.conf   # view vsftp config file
+egrep -v "^$|^#" /etc/vsftpd/vsftpd.conf  # 不显示以$和#开始的行
+[root@andycentos ~]# egrep -v "^$|^#" /etc/vsftpd/vsftpd.conf
+anonymous_enable=YES
+local_enable=YES
+write_enable=YES
+local_umask=022
+anon_umask=022
+anon_upload_enable=YES
+anon_other_write_enable=YES
+anon_mkdir_write_enable=YES
+dirmessage_enable=YES
+xferlog_enable=YES
+connect_from_port_20=YES
+xferlog_std_format=YES
+listen=NO
+listen_ipv6=YES
+pam_service_name=vsftpd
+userlist_enable=YES
+tcp_wrappers=YES
 
+参数                                      作用                                                                                       
+anonymous_enable=YES                允许匿名访问模式
+anon_umask=022                      匿名用户上传文件的umask值
+anon_upload_enable=YES              允许匿名用户上传文件
+anon_mkdir_write_enable=YES         允许匿名用户创建目录
+anon_other_write_enable=YES         允许匿名用户修改目录名称或删除目录
 
+[root@andycentos ~]# vim /etc/vsftpd/vsftpd.conf  # Change the config file refer above listed
+systemctl restart vsftpd  # restart vsftp
+[root@andycentos ~]# find /var -name pub  # find the default ftp folder pub
+/var/ftp/pub
+chown -R ftp: /var/ftp/pub  # change owner and group
+access by: ftp://ip
 
 ```
 
-#### deploy a file index by Apache
+#### deploy a web-based file index by Apache
 ```python
 yum intstall -y httpd   # install httpd
 cp -r /files /var/www/html/  # copy file to apache dir
