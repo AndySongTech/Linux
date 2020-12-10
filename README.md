@@ -1107,8 +1107,51 @@ yum groupinstall "GNOME Desktop" "Graphical Administration Tools" -y # 同上
 
 ```
 
-#### 
+#### samba
 ```python
+yum install -y samba   # install samba
+vim /etc/samba/smb.conf   # edit the samba config file
+add below config to the file
+  '[andy]
+        comment = Andy Directories
+        path = /andy_shared
+        valid users = %S, %D%w%S
+        browseable = No
+        read only = No
+        public = Yes '
+mkdir /andy_shared   # create the shared dir
+useradd andy_smb  # ceate the user for access shared folder  
+[root@andycentos ~]# pdbedit -a -u andy_smb  
+   # manage the SAM(samba access management) database (Database of Samba Users)， -a: add user to database, -u: user name  
+new password:              # create new password for user
+retype new password:
+Unix username:        andy_smb
+NT username:
+Account Flags:        [U          ]
+User SID:             S-1-5-21-836804173-3705210611-1749464523-1000
+Primary Group SID:    S-1-5-21-836804173-3705210611-1749464523-513
+Full Name:
+Home Directory:       \\andycentos\andy_smb
+HomeDir Drive:
+Logon Script:
+Profile Path:         \\andycentos\andy_smb\profile
+Domain:               ANDYCENTOS
+Account desc:
+Workstations:
+Munged dial:
+Logon time:           0
+Logoff time:          Wed, 06 Feb 2036 23:06:39 CST
+Kickoff time:         Wed, 06 Feb 2036 23:06:39 CST
+Password last set:    Thu, 03 Dec 2020 10:43:36 CST
+Password can change:  Thu, 03 Dec 2020 10:43:36 CST
+Password must change: never
+Last bad password   : 0
+Bad password count  : 0
+Logon hours         : FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFthx
+
+[root@andycentos ~]# setenforce 0
+[root@andycentos ~]# systemctl stop firewalld
+[root@andycentos ~]# systemctl restart smb
 
 
 ```
