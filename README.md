@@ -57,16 +57,18 @@ lvextend -r centos/root /dev/sda2  # r stand for resize
 
 ```
 
-#### 内存&CPU: free, top, ps
+#### 内存&CPU: free, top, ps，htop
 ```python
 free -h # 查看内存使用情况， -h 代表human readable
 top # 查看CPU使用情况, 按’z‘ 彩色显示进程, 'c' display absolute path of running pro
- htop is much powerful than top (Install by: yum install -y htop)
+htop is much powerful than top (Install by: yum install -y htop)
 top -u root #查看root用户使用的进程
 ps -aux # 以BSD语法显示正在运行的进程
 ps -ef # 以标准语法显示正在运行的进程
 more /proc/cpuinfo # show the cpu info 
 more /proc/cpuinfo | grep 'model name'
+cat /etc/services  # 查看服务端口号
+
 
 
 ```
@@ -151,6 +153,7 @@ install guide: https://github.com/draios/sysdig/wiki/How-to-Install-Sysdig-for-L
 #### more & cat & head & tail
 ```python
 cat andy.txt # display the file contents one time
+cat /etc/services  # show the service port number
 more andy.txt # display the file contents page by page
 head -n 5 andy.txt # display the head 5 lines
 head -v andy.txt # always show the file name
@@ -1341,12 +1344,46 @@ showmount -e 172.16.101.32  # show the NFS server's export list, only show the s
 mkdir /test   # create local mount dir
 mount -t nfs 172.16.101.32:/data /test   # mount the nfs dir to local dir, -t stands for file type 
 
-
 ```
 
-####
+#### dhcp
 ```python
+服务器端： 
+yum install -y dhcp    # instlal dhcp
+systemctl status dhcp     # check the service status
+cat /etc/dhcp/dhcpd.conf    # view the dhcp config file
+cat /usr/share/doc/dhcp*/dhcpd.conf.example >> /etc/dhcp/dhcpd.conf  # 导入模板文件
+[root@andycentos ~]# cat /etc/dhcp/dhcpd.conf
+subnet 192.168.182.0 netmask 255.255.255.0 {       #指定网段，需要和掩码保持一致
+  range 192.168.181.10 192.168.182.20;                     #指定IP池    
+  option domain-name-servers ns1.internal.example.org;  #指定DNS地址
+  option domain-name "internal.example.org";         #指定域       
+  option routers 192.168.182.1;                           #指定网关default-lease-time 600;                             #指定默认租约时间
+  max-lease-time 7200;                                 #指定最大租约时间
+}
+systemctl restart dhcpd   # start the service
+systemctl status dhcpd 
 
+客户端：
+[root@andycentos ~]# cat /etc/sysconfig/network-scripts/ifcfg-enp0s3  # enable get ip address by dhcp
+TYPE="Ethernet"
+PROXY_METHOD="none"
+BROWSER_ONLY="no"
+BOOTPROTO="dhcp"
+DEFROUTE="yes"
+IPV4_FAILURE_FATAL="no"
+IPV6INIT="yes"
+IPV6_AUTOCONF="yes"
+IPV6_DEFROUTE="yes"
+IPV6_FAILURE_FATAL="no"
+IPV6_ADDR_GEN_MODE="stable-privacy"
+NAME="enp0s3"
+UUID="8a535ce2-db1d-46d2-990e-c37de9e80da9"
+DEVICE="enp0s3"
+ONBOOT="yes"
+
+dhclient -r enxx  # releae the network card ip address
+dhclient  # renew ip address 
 
 
 ```
