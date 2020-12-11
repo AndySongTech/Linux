@@ -1292,8 +1292,123 @@ ssh 172.16.22.1  # ssh remote host without user name and password
 
 ```
 
-#### 
+#### nfs
 ```python
+NFS，是Network File System的简写，即网络文件系统, 用于Linux系统文件共享。网络文件系统是FreeBSD支持的文件系统中的一种，也被称为NFS； NFS允许一个系统在网络上与他人共享目录和文件。
+模式： C/S 模式
+端口： NFS是Net File System的简写,即网络文件系统.NFS通常运行于2049端口。
+部署NFS: 由于在使用NFS服务进行文件共享之前，需要使用RPC（Remote Procedure Call，远程过程调用）服务将NFS服务器的IP地址和端口号等信息发送给客户端。因此，在启动NFS服务之前，还需要顺带重启
+并启用rpcbind服务程序。
+服务器端搭建nfs: 
+yum install -y rpcbind nfs-utils  # install rpn and nfs
+mkdir /data  # create share dir 
+vim /etc/exports   # edit the config file
+  /andy_shared 172.20.10.7(rw) #给特定的ip共享,rw表示权限
+  /data *(r) #给所有ip 共享    
+  /data 172.20.10.0/28(rw)  #把网段共享出去 28表示掩码  
+  /data 172.20.10.0/28(rw)  192.168.64.0/24(rw)  #设置多个网络
+  注意: * 表示对所有网段开放权限
+[root@andycentos ~]# yum list installed | grep nfs   # check if the app is installed 
+Failed to set locale, defaulting to C
+libnfsidmap.x86_64                      0.25-19.el7                    @anaconda
+nfs-utils.x86_64                        1:1.3.0-0.68.el7               @base
+nfs4-acl-tools.x86_64                   0.3.3-19.el7                   @anaconda
+[root@andycentos ~]# yum list installed | grep rpcbind
+Failed to set locale, defaulting to C
+rpcbind.x86_64                          0.2.0-49.el7                   @base
+[root@andycentos ~]# cat /etc/group |grep nfs  # find the nfs group
+nfsnobody:x:65534:
+[root@andycentos ~]# cat /etc/passwd |grep nfs  # find the nfs owner name
+rpcuser:x:29:29:RPC Service User:/var/lib/nfs:/sbin/nologin
+nfsnobody:x:65534:65534:Anonymous NFS User:/var/lib/nfs:/sbin/nologin
+[root@andycentos ~]# chown -R nsfnobody: /data     # change owner and group to nfsnobody
+[root@andycentos ~]# systemctl restart rpcbind     # restart rpc service 
+[root@andycentos ~]# systemctl restart nfs         # restart nfs service
+查询命令：
+[root@andycentos ~]# rpm -qf `which showmount`     # check where is 'showmount' come from
+nfs-utils-1.3.0-0.68.el7.x86_64
+mkdir /test
+[root@andycentos ~]# showmount -d    # List only the directories mounted by some client.
+Directories on andycentos:
+/data
+
+客户端使用：
+yum install -y nfs-utils   # install nfs, if you using Mac computer, it will be already installed
+showmount -e 172.16.101.32  # show the NFS server's export list, only show the shared dir that client has permission 
+   Exports list on 172.16.101.32:
+   /data                               172.16.101.0/24
+
+mkdir /test   # create local mount dir
+mount -t nfs 172.16.101.32:/data /test   # mount the nfs dir to local dir, -t stands for file type 
+
+
+```
+
+####
+```python
+
+
+
+```
+
+####
+```python
+
+
+
+```
+
+####
+```python
+
+
+
+```
+
+####
+```python
+
+
+
+```
+####
+```python
+
+
+
+```
+
+####
+```python
+
+
+
+```
+
+####
+```python
+
+
+
+```
+
+####
+```python
+
+
+
+```
+
+####
+```python
+
+
+
+```
+
+####
+```python
+
 
 
 ```
