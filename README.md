@@ -985,6 +985,7 @@ rpm -qi httpd # show package info
 rpm -q --scripts httpd  # view the package configfiles
 rpm -qa | wc -l # show how many appp is installed (similar with: yum list installed | wc -l)
 rpm -qf /usr/bin/ls  # check who generate the /usr/bin/ls file
+rpm -qf /usr/bin/egrep & rpm -qf /usr/bin/grep  # grep and egrep are come from the same file
 rpm -qf `which httpd` # the same function like above
   [root@andycentos ~]# rpm -qf `which httpd`
   httpd-2.4.6-97.el7.centos.x86_64
@@ -1122,7 +1123,7 @@ add below config to the file
 mkdir /andy_shared   # create the shared dir
 chmod -R a+rw /andy_shared/   # grant user read and write permission for folder
 useradd andy_smb  # ceate the user for access shared folder  
-[root@andycentos ~]# pdbedit -a -u andy_smb  
+[root@andycentos ~]# pdbedit -a -u andy_smb   # user must be existed
    # manage the SAM(samba access management) database (Database of Samba Users)， -a: add user to database, -u: user name  
 new password:              # create new password for user
 retype new password:
@@ -1171,6 +1172,7 @@ ftp主动和被动模式，都是相对于的FTP server 端来判断的，如果
 （1）PORT（主动）模式模式只要开启服务器的21和20端口，而PASV（被动）模式需要开启服务器大于1024所有tcp端口和21端口。
 （2）从网络安全的角度来看的话似乎ftp PORT模式更安全，而ftp PASV更不安全，那么为什么RFC要在ftp PORT基础再制定一个ftp PASV模式呢？其实RFC制定ftp PASV模式的主要目的是为了数据传输安全角度出发的，因为ftp port使用固定20端口进行传输数据，那么作为黑客很容使用sniffer等探嗅器抓取ftp数据，这样一来通过ftp PORT模式传输数据很容易被黑客窃取，因此使用PASV方式来架设ftp server是最安全绝佳方案。(默认是被动工作模式)
 
+配置匿名模式：
 yum install -y vsftp  # install vsftp 
 more /etc/vsftpd/vsftpd.conf   # view vsftp config file
 egrep -v "^$|^#" /etc/vsftpd/vsftpd.conf  # 不显示以$和#开始的行
@@ -1202,10 +1204,48 @@ anon_other_write_enable=YES         允许匿名用户修改目录名称或删�
 
 [root@andycentos ~]# vim /etc/vsftpd/vsftpd.conf  # Change the config file refer above listed
 systemctl restart vsftpd  # restart vsftp
-[root@andycentos ~]# find /var -name pub  # find the default ftp folder pub
+[root@andycentos ~]# find /var -name pub  # find the default ftp share folder pub
 /var/ftp/pub
 chown -R ftp: /var/ftp/pub  # change owner and group
-access by: ftp://ip
+access by: ftp://ip or FileZilla Client
+
+配置本地用户模式：
+
+参数                                     作用                                                                                                      
+anonymous_enable=NO                 禁止匿名访问模式
+local_enable=YES                    允许本地用户模式
+write_enable=YES                    设置可写权限
+local_umask=022                     本地用户模式创建文件的umask值
+userlist_deny=YES                   启用“禁止用户名单”，名单文件为ftpusers和user_list
+userlist_enable=YES                 开启用户作用名单文件功能
+
+yum install -y vsftp 
+[root@andycentos ~]# egrep -v "^$|^#" /etc/vsftpd/vsftpd.conf
+anonymous_enable=NO
+local_enable=YES
+write_enable=YES
+local_umask=022
+anon_umask=022
+anon_upload_enable=YES
+anon_other_write_enable=YES
+anon_mkdir_write_enable=YES
+dirmessage_enable=YES
+xferlog_enable=YES
+connect_from_port_20=YES
+xferlog_std_format=YES
+listen=NO
+listen_ipv6=YES
+pam_service_name=vsftpd
+userlist_enable=YES
+tcp_wrappers=YES
+
+vim /etc/vsftpd/vsftpd.conf
+systemctl restart vsftpd
+useradd andyftp
+passwd andyftp or echo "123password" | passwd --stdin andyftp # set a password for user
+as default the file will be upload to user's home dir
+access by: ftp://ip or FileZilla Client
+
 
 ```
 
