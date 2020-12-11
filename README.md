@@ -1245,7 +1245,7 @@ useradd andyftp
 passwd andyftp or echo "123password" | passwd --stdin andyftp # set a password for user
 as default the file will be upload to user's home dir
 access by: ftp://ip or FileZilla Client
-
+du -sh /home/andyftp/   # check dir size 
 
 ```
 
@@ -1260,15 +1260,35 @@ web page is like: https://mirrors.aliyun.com/epel/7Server/x86_64/
 
 ```
 
-#### 
+#### systemctl 
 ```python
-
+systemctl status sshd   # view the stauts of service 
+systemctl start httpd  # start the httpd service
+systemctl stop smb  # stop the smb service
+systemctl restart vsftpd  # restart vsftpd service, it will interrupt the service
+systemctl reload firewalld  # soft restart service, it will not interrupt the service, but not all the service support this command
+systemctl enable vsftpd    # launch service at login
+systemctl disable smb      # Do not launch service at login
 
 ```
 
-#### 
+#### sshd 
 ```python
-
+SSHD服务
+介绍：SSH 协议：安全外壳协议。为 Secure Shell 的缩写。SSH 为建立在应用层和传输层基础上的安全协议。
+默认端口: 22
+作用: 
+sshd服务使用SSH协议可以用来进行远程控制， 或在计算机之间传送文件 
+相比较之前用telnet方式来传输文件要安全很多，因为telnet使用明文传输，是加密传输。
+SSH 配置文件:
+SSH 常用配置文件有两个/etc/ssh/ssh_config 和/etc/ssh/sshd_config。
+ssh_config 为客户端配置文件
+sshd_config 为服务器端配置文件
+配置免密登录： 
+yum -y install openssh openssh-clients openssh-server openssh-askpass
+ssh-keygen  # generate the key
+ssh-copy-id 172.16.22.1  # send the pub key to remote host
+ssh 172.16.22.1  # ssh remote host without user name and password
 
 ```
 
