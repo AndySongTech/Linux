@@ -1387,10 +1387,10 @@ ONBOOT="yes"
 dhclient -r enxx  # release the network card ip address
 dhclient  # renew ip address 
 
-
 ```
 
-####apache
+#### apache
+
 ```python
 click here get more info about Apache 
 httpd -V   # check httpd version 2.4.6
