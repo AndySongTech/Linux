@@ -1390,8 +1390,21 @@ dhclient  # renew ip address
 
 ```
 
-####
+####apache
 ```python
+click here get more info about Apache 
+httpd -V   # check httpd version 2.4.6
+vim /etc/httpd/conf/httpd.conf  # main config file
+ Listen 80  # website port
+ ServerName: www.andysong.com   # config website domain name
+ DocumentBoot "/var/www/html/"   # config the default home dit
+ DirectoyIndex index.html       # config the homepage file
+ /var/log/httpd          # config the log file location
+cat /etc/httpd/conf.d/*.conf    # sub config file
+ss -ntl  # view listen port, netstat -ntl
+cd /var/log/httpd   # log file location
+rpm -ql httpd  # view httpd generate folder
+
 
 
 
