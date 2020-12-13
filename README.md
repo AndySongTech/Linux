@@ -119,6 +119,7 @@ cp -a andy.txt . # -a: copy file's properties
 cp ~/data . # copy data the current dir
 scp ~/localfile andy@172.16.100.23: /usr/data/ # copy local file to remote host
 scp andy@172.16.100.23: /usr/data/ . # copy remote host file to local current dir
+scp -r andy@172.16.100.23: /usr/data . # copy remote host directory to local current dir
 
 ```
 
@@ -1382,7 +1383,7 @@ UUID="8a535ce2-db1d-46d2-990e-c37de9e80da9"
 DEVICE="enp0s3"
 ONBOOT="yes"
 
-dhclient -r enxx  # releae the network card ip address
+dhclient -r enxx  # release the network card ip address
 dhclient  # renew ip address 
 
 
