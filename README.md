@@ -1359,7 +1359,8 @@ subnet 192.168.182.0 netmask 255.255.255.0 {       #指定网段，需要和掩�
   range 192.168.181.10 192.168.182.20;                     #指定IP池    
   option domain-name-servers ns1.internal.example.org;  #指定DNS地址
   option domain-name "internal.example.org";         #指定域       
-  option routers 192.168.182.1;                           #指定网关default-lease-time 600;                             #指定默认租约时间
+  option routers 192.168.182.1;                           #指定网关 
+  default-lease-time 600;                             #指定默认租约时间
   max-lease-time 7200;                                 #指定最大租约时间
 }
 systemctl restart dhcpd   # start the service
