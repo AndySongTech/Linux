@@ -1444,24 +1444,85 @@ rpm -ql httpd  # view httpd generate folder
 
 ```
 
-####
+#### uniq
 ```python
+-c或--count 在每列旁边显示该行重复出现的次数。
+-d或--repeated 仅显示重复出现的行列。
+-f<栏位>或--skip-fields=<栏位> 忽略比较指定的栏位。
+-s<字符位置>或--skip-chars=<字符位置> 忽略比较指定的字符。
+-u或--unique 仅显示出一次的行列。
+-w<字符位置>或--check-chars=<字符位置> 指定要比较的字符。
+--help 显示帮助。
+--version 显示版本信息。
+[输入文件] 指定已排序好的文本文件。如果不指定此项，则从标准读取数据；
+[输出文件] 指定输出的文件。如果不指定此选项，则将内容显示到标准输出设备（显示终端）
+
+uniq number.txt  # 删除重复行
+uniq -c number.txt  # 删除重复行并显示重复的次数
+uniq -d number.txt  # 仅显示重复行的内容
+sort number | uniq  # 一般和sort搭配使用
 
 
 
 ```
 
-####
+#### sort
 ```python
-
-
+-b 忽略每行前面开始出的空格字符。
+-c 检查文件是否已经按照顺序排序。
+-d 排序时，处理英文字母、数字及空格字符外，忽略其他的字符。
+-f 排序时，将小写字母视为大写字母。
+-i 排序时，除了040至176之间的ASCII字符外，忽略其他的字符。
+-m 将几个排序好的文件进行合并。
+-M 将前面3个字母依照月份的缩写进行排序。
+-n 依照数值的大小排序。
+-u 意味着是唯一的(unique)，输出的结果是去完重了的。
+-o<输出文件> 将排序后的结果存入指定的文件。
+-r 以相反的顺序来排序。
+-t<分隔字符> 指定排序时所用的栏位分隔字符。
+-k 显示指定字段的内容
+-c会检查文件是否已排好序，如果乱序，则输出第一个乱序的行的相关信息，最后返回1 
++<起始栏位>-<结束栏位> 以指定的栏位来排序，范围由起始栏位到结束栏位的前一栏位。
+--help 显示帮助。
+--version 显示版本信息。
+sort /etc/passwd   # 按assci码标准输出升序排序
+sort -r /etc/passwd  # 按降序排序
+sort -u /etc/passws  # 去除重复行
+sort -r number.txt -o number.txt  # 按降序排列，然后将结果写入原文件, 类似重定向，但不会把源文件清空。 
+sort -n number.txt   # 按数值从小到大来排序
+sort -n -t ':' -k 3 number.txt  # -t 设置分隔符（类似cut里的-d）， -k 设置取值范围(类似cut里的-f)
+[root@andycentos ~]# sort number.txt
+apple:10:2.5
+banana:30:5.5
+orange:20:3.4
+pear:90:2.3
+[root@andycentos ~]# sort -n -t ':' -k 3 number.txt  # 以：位分割符，按第3位置的值排序
+pear:90:2.3
+apple:10:2.5
+orange:20:3.4
+banana:30:5.5
+sort -n -t ‘:‘ -k 2 -k 3 number.txt  # 先按第2位置的值排序，如果值相同，再按第3位置的值排序
+sort -t ‘ ‘ -k 1.2 number.txt    # 按第1位置值的第2个字母排序
 
 ```
 
-####
+#### cut
 ```python
+cut options:
+-b：仅显示行中指定直接范围的内容；
+-c：仅显示行中指定范围的字符；
+-d：指定字段的分隔符，默认的字段分隔符为“TAB”；
+-f：显示指定字段的内容；
+-n：与“-b”选项连用，不分割多字节字符；
+--complement：补足被选择的字节、字符或字段；
+--out-delimiter=<字段分隔符>：指定输出内容是的字段分割符；
+--help：显示指令的帮助信息；
+--version：显示指令的版本信息。
 
-
+cut -f 1 /etc/passwd  # 显示第一字段的内容，默认的字段分隔符为tab
+cut -d ":" -f 1 /etc/passwd  # 以：为分隔符显示第一字段
+cut -d ":" -f 1 /etc/passwd | sort  # 按assci码标准输出排序
+cut -d ":" -f 1 /etc/passwd | sort | uniq -c # 取重复值的次数，可以用来统计同一内容出现的次数
 
 ```
 #### awk
