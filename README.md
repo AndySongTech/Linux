@@ -286,6 +286,21 @@ which ls # check command file location
 
 ```
 
+#### type
+
+```
+use for check the command type
+[root@andycentos ~]# type set
+set is a shell builtin
+[root@andycentos ~]# type ls
+ls is aliased to `ls --color=auto'
+[root@andycentos ~]# type cat
+cat is hashed (/bin/cat)
+[root@andycentos ~]# type top
+top is /bin/top
+
+```
+
 #### ip 
 ```python
 
@@ -1511,19 +1526,46 @@ cut -d ":" -f 1 /etc/passwd  # 以：为分隔符显示第一字段
 cut -d ":" -f 1,7 /etc/passwd  # 以：为分隔符显示第1和第7个字段
 cut -d ":" -f 1 /etc/passwd | sort  # 按assci码标准输出排序
 cut -d ":" -f 1 /etc/passwd | sort | uniq -c # 取重复值的次数，可以用来统计同一内容出现的次数
+[root@andycentos ~]# ip a | grep global | cut -d "/" -f 1| cut -d "t" -f 2| tr -d " "  # 取机器的IP地址
+172.16.67.2
+[root@andycentos ~]# ip a | grep global | awk -F/ '{ print $1 }'| cut -d "t" -f 2 | tr -d " "
+172.16.67.2
+```
+
+#### set
+```python
+set -o  # 执行set -o会输出当前的set选项配置情况
+set +o  # 也是输出当前的set选项的配置情况，只不过输出形式是一系列的set命令。这种输出形式一般用于重建当前的set配置项时使用。
+-e or -o errexit  # 设置了这个选项后，当一个命令执行失败时，shell会立即退出。
+-n or -o noexec  # 设置了这个选项后，shell读取命令，但是不会执行它们。这个选项可以用来检查shell脚本是否存在语法错误。
+-u or -o unset   # 设置了这个选项之后，当shell要扩展一个还未设置过值的变量时，shell必须输出信息到stderr，然后立即退出。但是交互式shell不应该退出。
+-x or -o xtrace   # 设置了这个选项之后，对于每一条要执行的命令，shell在扩展了命令之后（参数扩展）、执行命令之前，输出trace到stderr。
+-o pipefail    # 这个选项会影响管道的返回值。默认情况下，一个管道的返回值是最后一个命令的返回值，比如cmda | cmdb | cmdc这个管道，返回值是由cmdc命令的返回值决定的。如果指定了pipefail选项，那么管道的返回值就会由最后一个失败的命令决定，意思就是有命令失败就会返回非0值。如果所有命令都成功，则返回成功。
+
+例子
+#!/bin/bash
+set -o xtrace
+set -o errexit  # 可以把这行注释掉看下执行效果有什么不一样。
+echo "Before"
+ls filenoexists  # ls也不存在的文件
+echo "After"
 
 ```
 
-####
+#### declare
 ```python
-
-
-
-```
-
-####
-```python
-
+declare命令用于声明 shell 变量。
+declare为shell指令，在第一种语法中可用来声明变量并设置变量的属性([rix]即为变量的属性），在第二种语法中可用来显示shell函数。若不加上任何参数，则会显示全部的shell变量与函数(与执行set指令的效果相同)。
+参数：
++/- 　"-"可用来指定变量的属性，"+"则是取消变量所设的属性。
+-f   仅显示函数。
+-r 　将变量设置为只读。
+-x 　指定的变量会成为环境变量，可供shell以外的程序来使用。
+-i 　[设置值]可以是数值，字符串或运算式。
+## human dirs will run first and must be in humans/
+declare -r HUMAN_DIRS=("china" "north_america")
+## team dirs will run second and must be in teams/
+declare -r TEAM_DIRS=("china" "north_america" "composite" "app_groups")
 
 
 ```
