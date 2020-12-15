@@ -779,6 +779,11 @@ mount /dev/sdb1 /usr/data # mount /dev/sdb1 on /urs/data
 unmout /urs/data  # unmout /usr/data
 echo "/dev/sdb1 /part ext4 defaults 0 0" >> /etc/fstab  # mount sdb1 when the machine start
 
+一般的mount挂载，重启电脑后就会丢失挂载，想开机自动挂载可以通过以下方式：
+cat /etc/fstab  # view mount config file
+ /dev/mapper/centos-root /   # mount to / dir
+cat /etc/rc.local    # mount the block file to this file 
+noted: 建议通过rc.local 挂载系统磁盘，fstab 会开机自检，如果出现问题会导致开不了机，rc.local则不会
 ```
 
 #### Disk Management
@@ -1426,41 +1431,6 @@ source /etc/profile.d/local.sh  # 重新加载文件使之生效
 
 ```
 
-
-####
-```python
-
-
-
-```
-
-####
-```python
-
-
-
-```
-####
-```python
-
-
-
-```
-
-####
-```python
-
-
-
-```
-
-####
-```python
-
-
-
-```
-
 #### uniq
 ```python
 -c或--count 在每列旁边显示该行重复出现的次数。
@@ -1478,8 +1448,6 @@ uniq number.txt  # 删除重复行
 uniq -c number.txt  # 删除重复行并显示重复的次数
 uniq -d number.txt  # 仅显示重复行的内容
 sort number | uniq  # 一般和sort搭配使用
-
-
 
 ```
 
@@ -1545,6 +1513,41 @@ cut -d ":" -f 1 /etc/passwd | sort  # 按assci码标准输出排序
 cut -d ":" -f 1 /etc/passwd | sort | uniq -c # 取重复值的次数，可以用来统计同一内容出现的次数
 
 ```
+
+####
+```python
+
+
+
+```
+
+####
+```python
+
+
+
+```
+####
+```python
+
+
+
+```
+
+####
+```python
+
+
+
+```
+
+####
+```python
+
+
+
+```
+
 #### awk
 ```python
 
