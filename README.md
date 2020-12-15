@@ -1406,9 +1406,26 @@ cd /var/log/httpd   # log file location
 rpm -ql httpd  # view httpd generate folder
 
 
+```
 
+####  config env profile
+```python
+/etc/profile: 环境变量的主配置文件
+/etc/profile.d: 环境变量的子目录
+/etc/profile.d/*.sh: 环境变量的子配置文件，建议创建一个local.sh文件用于添加新的环境变量
+[root@andycentos ~]# ls /etc/profile
+profile    profile.d/
+[root@andycentos ~]# ls /etc/profile.d/*.sh
+/etc/profile.d/256term.sh                    /etc/profile.d/colorgrep.sh  /etc/profile.d/kde.sh   /etc/profile.d/local.sh              /etc/profile.d/vim.sh
+/etc/profile.d/abrt-console-notification.sh  /etc/profile.d/colorls.sh    /etc/profile.d/lang.sh  /etc/profile.d/qt-graphicssystem.sh  /etc/profile.d/which2.sh
+/etc/profile.d/bash_completion.sh            /etc/profile.d/flatpak.sh    /etc/profile.d/less.sh  /etc/profile.d/qt.sh
+[root@andycentos ~]# vim /etc/profile.d/local.sh    # 编辑子配置文件
+EXPORT PATH=/usr/local/tomcat/bin/:$PATH     # 添加环境变量
+or echo "EXPORT PATH=/usr/local/tomcat/bin/:$PATH" >> /etc/profile.d/local.sh
+source /etc/profile.d/local.sh  # 重新加载文件使之生效
 
 ```
+
 
 ####
 ```python
@@ -1519,8 +1536,11 @@ cut options:
 --help：显示指令的帮助信息；
 --version：显示指令的版本信息。
 
+echo "this is andy" | cut -c 4 # 取第4个字符s
+echo "this is andy" | cut -c 1-4  # 取1-4个字符this
 cut -f 1 /etc/passwd  # 显示第一字段的内容，默认的字段分隔符为tab
 cut -d ":" -f 1 /etc/passwd  # 以：为分隔符显示第一字段
+cut -d ":" -f 1,7 /etc/passwd  # 以：为分隔符显示第1和第7个字段
 cut -d ":" -f 1 /etc/passwd | sort  # 按assci码标准输出排序
 cut -d ":" -f 1 /etc/passwd | sort | uniq -c # 取重复值的次数，可以用来统计同一内容出现的次数
 
