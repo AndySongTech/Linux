@@ -19,9 +19,110 @@ Shell属于内置的脚本,程序开发的效率非常高，依赖于功能强�
 /usr/bin/bash
 /bin/tcsh
 /bin/csh
-
+在现代的 Linux 上，sh 已经被 bash 代替，/bin/sh往往是指向/bin/bash的符号链接。 
+如果你希望查看当前 Linux 的默认 Shell，那么可以输出 SHELL 环境变量：
 [root@andycentos ~]# echo $SHELL    
 /bin/bash
+输出结果表明默认的 Shell 是 bash。 
+SHELL是 Linux 系统中的环境变量，它指明了当前使用的 Shell 程序的位置，也就是使用的哪个 Shell。
+[root@andycentos ~]# ll  `which sh`
+lrwxrwxrwx. 1 root root 4 Mar 15  2020 /usr/bin/sh -> bash
+
+```
+
+#### Create the first shell 
+```
+[root@andycentos ~]# vim andy.sh  # create shell file
+  #! /bin/bash  
+  echo " Hello World"
+  
+运行shell脚本：
+方法 1：直接用 bash 解释器执行
+[root@andycentos ~]# bash andy.sh  # run shell by bash
+Hello World
+当前终端会新生成一个子 bash 去执行脚本。
+
+方法 2：添加可执行权限
+[root@andycentos ~]# ./andy.sh     # run shell directly will get error, need add execute permission
+-bash: ./andy.sh: Permission denied
+[root@andycentos ~]# chmod +x andy.sh
+[root@andycentos ~]# ./andy.sh
+Hello World
+这种方式默认根据脚本第一行指定的解释器处理，如果没写以当前默认 Shell 解释器执行。 
+注意，这里在运行时一定要写成 ./andy.sh（绝对路径亦可），而不是 andy.sh，运行其它二进制的程序也一样，直接写 andy.sh，Linux 系统会去 PATH（环境变量） 里寻找有没有叫 andy.sh 的，而只有 /bin, /sbin, /usr/bin，/usr/sbin 等在 PATH 里，你的当前目录通常不在 PATH 里，所以写成 andy.sh 是会找不到命令的，要用 ./andy.sh 告诉系统说，就在当前目录找。
+
+方法 3：source 命令执行，以当前默认 Shell 解释器执行
+[root@andycentos ~]# source andy.sh
+Hello World
+
+```
+
+
+#### source filename 与 bash filename 及./filename执行脚本的区别
+ 
+```
+当shell脚本具有可执行权限时，用bash filename与./filename执行脚本是没有区别得。./filename是因为当前目录没有在PATH中，所以”.”是用来表示当前目录的。
+source filename：这个命令其实只是简单地读取脚本里面的语句依次在当前shell里面执行，没有建立新的子shell。那么脚本里面所有新建、改变变量的语句都会保存在当前shell里面。
+bash filename 重新建立一个子shell，在子shell中执行脚本里面的语句，该子shell继承父shell的环境变量，但子shell新建的、改变的变量不会被带回父shell。
+以为就是说，子shell新建变量，在父shell中不会生效：
+
+[root@andycentos ~]# pstree | grep sshd
+        |-sshd---sshd---bash-+-grep
+[root@andycentos ~]# bash          # 每执行一次bash，就会生成一个子shell
+[root@andycentos ~]# pstree | grep sshd
+        |-sshd---sshd---bash---bash-+-grep
+[root@andycentos ~]# name=andy      # 在子shell里定义了一个name变量
+[root@andycentos ~]# echo $name     # 在子shell里可以返回正确的值
+andy
+[root@andycentos ~]# exit         # 后退到父shell
+exit
+[root@andycentos ~]# pstree |grep sshd
+        |-sshd---sshd---bash-+-grep
+[root@andycentos ~]# echo $name    # 变量不可以在父shell里使用
+
+```
+
+#### 测试
+```
+ 练习1：使用root用户帐号创建并执行test2.sh，实现创建一个shelltest用户，并在其家目录中新建文件try.html。
+ 练习2：统计当前系统总共有多少用户
+ 练习3：统计当前已经安装的软件数量
+ 
+vim test2.sh
+  #!/bin/bash
+  useradd shelltest
+  touch /home/shelltest/try.html
+  cat /etc/passwd | wc -l
+  yum list installed | wc -l 
+  # or rpm -qa | wc -l 
+
+```
+
+####
+```
+
+
+
+```
+
+####
+```
+
+
+
+```
+
+####
+```
+
+
+
+```
+
+####
+```
+
+
 
 ```
 
