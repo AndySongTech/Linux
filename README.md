@@ -1416,6 +1416,22 @@ rpm -ql httpd  # view httpd generate folder
 
 ####  config env profile
 ```python
+运行shell时，会同时存在三种变量：
+1) 局部变量
+局部变量在脚本或命令中定义，仅在当前shell实例中有效，其他shell启动的程序不能访问局部变量。
+2) 环境变量
+所有的程序，包括shell启动的程序，都能访问环境变量，有些程序需要环境变量来保证其正常运行。必要的时候shell脚本也可以定义环境变量。
+3) shell变量
+shell变量是由shell程序设置的特殊变量。shell变量中有一部分是环境变量，有一部分是局部变量，这些变量保证了shell的正常运行
+
+普通变量定义：VAR=value
+定义只读变量：readonly VAR
+临时环境变量定义：export Okta_Token=Andyoktakeyid123456789
+变量引用：$Okta_Token
+删除变量：unset Okta_Token # 另外只读变量不可以删除，但可以通过关闭terminal来实现关闭的效果
+下面看下他们之间区别：
+Shell 进程的环境变量作用域是 Shell 进程，当 export 导入到系统变量时，则作用域是 Shell 进程及其 Shell 子进程，另开shell无效。
+如果想变量作用于不同的shell， 可以通过编辑以下配置文件：
 /etc/profile: 环境变量的主配置文件
 /etc/profile.d: 环境变量的子目录
 /etc/profile.d/*.sh: 环境变量的子配置文件，建议创建一个local.sh文件用于添加新的环境变量
