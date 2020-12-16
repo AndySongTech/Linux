@@ -319,20 +319,6 @@ curl -v www.google.com # -v: make the operation more talkative
 
 ```
 
-#### tr 
-```python
-cat /etc/passwd | tr a-z A-Z  # translate lowcase to upcase
-cat /etc/passwd | tr [:lower:] [:upper:] 
--c或——complerment：取代所有不属于第一字符集的字符；
--d或——delete：删除所有属于第一字符集的字符；
--s或--squeeze-repeats：把连续重复的字符以单独一个字符表示；
--t或--truncate-set1：先删除第一字符集较第二字符集多出的字符。
-echo "hello 123 world 456" | tr -d '0-9'   # print hello word, -d: delete set1 '0-9'
-echo aa.,a 1 b#$bb 2 c*/cc 3 ddd 4 | tr -d -c '0-9 \n' # print 1 2 3 4, set1 include '0-9, space, \n'
-echo "thissss is      a text linnnnnnne." | tr -s ' sn' # print this is a text line, set1 include ' space, s, n'
-
-```
-
 #### dd
 ```python
 转换和拷贝文件
@@ -1487,6 +1473,7 @@ sort number | uniq  # 一般和sort搭配使用
 --version 显示版本信息。
 sort /etc/passwd   # 按assci码标准输出升序排序
 sort -r /etc/passwd  # 按降序排序
+sort -r rank | head -3  # 列出前3名
 sort -u /etc/passws  # 去除重复行
 sort -r number.txt -o number.txt  # 按降序排列，然后将结果写入原文件, 类似重定向，但不会把源文件清空。 
 sort -n number.txt   # 按数值从小到大来排序
@@ -1530,8 +1517,62 @@ cut -d ":" -f 1 /etc/passwd | sort | uniq -c # 取重复值的次数，可以用
 172.16.67.2
 [root@andycentos ~]# ip a | grep global | awk -F/ '{ print $1 }'| cut -d "t" -f 2 | tr -d " "
 172.16.67.2
+cat /var/log/httpd/access_log | cut -d “ “ -f 1 | sort | uniq -c | sort-nr   # 统计同一IP访问Apache的次数
+[root@andycentos ~]# cat test.sh |sort|uniq -c| sort -n    # 统计网站出现的次数，并按升序排列
+      7 http://www.qq.com
+     10 http://www.taobao.com
+     12 http://www.sina.com
+     19 http://www.baidu.com
+[root@andycentos ~]# cat test.sh |sort|uniq -c| sort -n -r   # 统计网站出现的次数，并按降序排列
+     19 http://www.baidu.com
+     12 http://www.sina.com
+     10 http://www.taobao.com
+      7 http://www.qq.com
+[root@andycentos ~]# cat test.sh |sort|uniq -c| sort -nr | head -2  # 统计网站出现的次数，取出出现次数最多的两个
+     19 http://www.baidu.com
+     12 http://www.sina.com
 ```
 
+#### tr 
+```python
+cat /etc/passwd | tr a-z A-Z  # translate lowcase to upcase
+cat /etc/passwd | tr [:lower:] [:upper:] 
+-c或——complerment：取代所有不属于第一字符集的字符；
+-d或——delete：删除所有属于第一字符集的字符；
+-s或--squeeze-repeats：把连续重复的字符以单独一个字符表示；
+-t或--truncate-set1：先删除第一字符集较第二字符集多出的字符。
+echo "hello 123 world 456" | tr -d '0-9'   # print hello word, -d: delete set1 '0-9'
+echo "aa.,a 1 b#$bb 2 c*/cc 3 ddd 4" | tr -d -c '0-9 \n' # print 1 2 3 4, set1 include '0-9, space, \n'
+echo "thissss is      a text linnnnnnne." | tr -s ' sn' # print this is a text line, set1 include ' space, s, n'
+
+```
+#### seq
+```
+生成一个数组序列
+[root@andycentos ~]# seq 6   # 生成1-6的数， 6位终止数，默认从1开始，逐个加1
+1
+2
+3
+4
+5
+6
+[root@andycentos ~]# seq 2 7   # 生成2-7的数，不指定间隔默认为1
+2
+3
+4
+5
+6
+7
+[root@andycentos ~]# seq 1 2 10   # 生产从1开始间隔为2，终止数为10的数
+1
+3
+5
+7
+9
+seq 1 2 100   # 生成100以内的奇数
+seq 2 2 100   # 生成100以内的偶数
+
+```
 #### set
 ```python
 set -o  # 执行set -o会输出当前的set选项配置情况
