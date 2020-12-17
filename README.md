@@ -392,7 +392,8 @@ see you
 #### find
 ```python
 find / -name sshd   # find the file name is sshd in / dir
-find . -name ss?*   # using wildcards to find
+find . -name ss?*   # using wildcards to find current dir
+find -name ss?*     # find in current dir
 find / -size 1M   # find file size is 1M
 find / -type f  # b/d/c/p/l/f	匹配文件类型（后面的字幕字母依次表示块设备、目录、字符设备、管道、链接文件、文本文件）
 find /tmp/ -name *.doc -o -name *.exel -o -name *.wps   # 从/tmp下找出后缀是wps 或doc 或exel的文件 -o: 代表 'or' 
@@ -1626,16 +1627,57 @@ declare -r TEAM_DIRS=("china" "north_america" "composite" "app_groups")
 
 
 ```
-####
+#### exit
 ```python
-
+在shell中当你 exit 0 的时候,在调用环境 echo $? 就返回0，也就是说调用环境就认为你的这个程序执行正确
+当你 exit 1 的时候,一般是出错定义这个1，也可以是其他数字，很多系统程序这个错误编号是有约定的含义的。 但不为0 就表示程序运行出错。 调用环境就可以根据这个返回值判断 你这个程序运行是否ok。
+如果你用 脚本 a 调用 脚本b ，要在a中判断b是否正常返回，就是根据 exit 0 or 1 来识别。
 
 
 ```
 
-####
+#### if
 ```python
+格式：if list; then list; [ elif list; then list; ] ... [ else list; ] fi
+单分支： 
+#!/bin/bash
+i=10
+if [ $i -ge 5 ]; then
+ echo "Yes"
+fi
 
+双分支：
+#!/bin/bash
+i=10
+if [ $i -le 5 ]; then
+        echo "Small"
+else
+        echo "Big"
+fi
+
+#!/bin/bash
+NAME=crond
+NUM=`ps -aux |grep $NAME | grep -cv grep`
+if [ $NUM -eq 1 ]; then
+  echo "$NAME is running"
+else
+  echo "$NAME is not running"
+
+fi
+
+多分支：
+$1 : 表示输入的第一个参数
+#!/bin/bash
+NUM=$1   
+if [ $1 -eq 1 ]; then
+ echo "Input is 1"
+elif [ $1 -eq 2 ]; then
+ echo "Input is 2"
+elif [$1 -eq 3 ]; then
+ echo "Input is 3"
+else
+ echo " I don't know"
+fi
 
 
 ```
