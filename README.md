@@ -1679,15 +1679,72 @@ else
  echo " I don't know"
 fi
 
+for more shell examples check the shell folder in my Lunix Repo.
 
 ```
 
-####
+#### for 
 ```python
+for 循环语句格式：
+for 变量名 in 取值列表; do
+　　命令
+done
+or
+for 变量名 in 取值列表
+do
+　命令
+done
 
+#!/bin/bash
+for i in {1..10}
+do 
+ echo $i
+ sleep 1
+done
 
+#!/bin/bash
+sum=0
+for i in `seq 2 2 10`
+do
+ let sum+=$i
+ 
+done
+echo $sum
 
+判断/root下的文件类型：
+#!/bin/bash
+for i in `ls -l /root |grep -o "^." |grep -v t`
+do
+  if [ $i == - ]; then
+    echo " this is general file"
+  elif [ $i == d ]; then
+    echo " this is a directory "
+  elif [ $i == l ]; then
+    echo " this is a link file"
+  else
+    echo "this is the other type files"
+  fi
+
+done
 ```
+
+#### while
+条件为真就进入死循环；条件为假就退出循环
+#!/bin/bash
+i=0
+while [ $i -lt 10 ]
+do
+  echo $i
+  let i++
+done
+
+死循环：
+#!/bin/bash
+i=0
+while true
+do
+  echo $i
+done
 
 #### awk
 ```python
