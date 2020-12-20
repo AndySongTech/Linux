@@ -1746,6 +1746,94 @@ do
   echo $i
 done
 
+监控tty连接数：
+vim while_monitor_tty.sh
+#!/bin/bash
+while true
+do 
+  num=`who | wc -l`
+  echo "Current tty session is $num " >/root/shell/tty.txt
+  sleep 1
+
+done
+运行脚本：
+bash while_monitor_tty.sh  # 在current终端运行，退出或关闭终端脚本及停止运行
+bash while_monitor_tty.sh & # 在后台运行， 关闭终端后脚本停止运行
+nohup bash while_monitor_tty.sh &  # 在后台运行，不挂起，在服务器运行的情况下可以一直运行，及时终端关闭或退出。
+终止脚本运行：
+ps -aux | grep while_monitor_tty.sh  # 找到相应的进程PID
+kill -9 15470  # kill 对应的进程既可以终止脚本运行
+
+通过while逐行读取文本里的内容：
+#!/bin/bash
+cat ./tty.txt | while read line
+do 
+  echo "$line"
+  sleep 1
+  
+done
+
+#### break & continue
+```
+break 是终止整个循环。
+continue 是跳出当前本次循环。
+#!/bin/bash
+for i in {1..10}
+do
+if [ $i -eq 5 ]; then
+   continue
+else
+    echo "$i"
+    let i++
+fi
+done
+
+[root@andycentos shell]# bash break_test.sh
+1
+2
+3
+4
+6
+7
+8
+9
+10
+#!/bin/bash
+for i in {1..10}
+do
+if [ $i -eq 5 ]; then
+   break
+else
+    echo "$i"
+    let i++
+
+fi
+done
+[root@andycentos shell]# bash break_test.sh
+1
+2
+3
+4
+```
+
+####
+```
+
+```
+
+####
+```
+
+```
+
+####
+```
+
+```
+####
+```
+
+```
 #### awk
 ```python
 
