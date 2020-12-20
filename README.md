@@ -1748,6 +1748,7 @@ done
 ```
 
 #### while
+```
 条件为真就进入死循环；条件为假就退出循环
 #!/bin/bash
 i=0
@@ -1792,7 +1793,10 @@ do
   
 done
 
+```
+
 #### break & continue
+
 ```
 break 是终止整个循环。
 continue 是跳出当前本次循环。
