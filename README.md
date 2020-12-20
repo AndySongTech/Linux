@@ -1777,6 +1777,7 @@ done
 ```
 break 是终止整个循环。
 continue 是跳出当前本次循环。
+注意：continue 与 break 语句只能循环语句（for, while）中使用。
 #!/bin/bash
 for i in {1..10}
 do
@@ -1787,7 +1788,7 @@ else
     let i++
 fi
 done
-
+输出：
 [root@andycentos shell]# bash break_test.sh
 1
 2
@@ -1798,6 +1799,7 @@ done
 8
 9
 10
+
 #!/bin/bash
 for i in {1..10}
 do
@@ -1809,11 +1811,59 @@ else
 
 fi
 done
+输出：
 [root@andycentos shell]# bash break_test.sh
 1
 2
 3
 4
+
+练习： 猜数游戏
+#!/bin/bash
+clear
+num=`echo "$RANDOM" | cut -c 1-2`
+while true
+do
+  read -p "Input the number in range 0-99: " num1
+  if [ $num1 -lt $num ]; then
+    echo "The number is greater than your input, try it again. "
+    continue
+    
+  elif [ $num1 -ge 100 ]; then
+    echo " The number is exceed the rang. "
+    continue
+    
+  elif [ $num1 -gt $num ]; then
+    echo " The number is less than your input, try it again. "
+    continue
+  
+  elif [ $num1 -eq $num ]; then
+    echo " You got it. Awesome!!! "
+    break
+  else
+    echo " See you next time. "
+    exit
+
+  fi
+done
+
+监控主机在线情况：
+#!/bin/bash
+. /etc/init.d/functions
+ip=192.168.10.
+for i in {1..254}
+do 
+  if ping -c 1 -w 1 $ip$i &>/dev/null; then
+    echo -n "$ip$i"
+    success
+    echo ""
+  else
+    echo -n "$ip$i" 
+    failure
+    echo ""
+  fi
+done
+
 ```
 
 ####
