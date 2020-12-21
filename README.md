@@ -1797,7 +1797,7 @@ done
 
 #### break & continue
 
-```
+```shell
 break 是终止整个循环。
 continue 是跳出当前本次循环。
 注意：continue 与 break 语句只能循环语句（for, while）中使用。
