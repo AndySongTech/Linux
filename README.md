@@ -1901,8 +1901,68 @@ done
 
 ```
 
-####
-```
+#### shell 正则表达式
+```shell
+正则表达式在每种语言中都会有，功能就是匹配符合你预期要求的字符串。
+Shell 正则表达式分为两种：
+  基础正则表达式
+  扩展正则表达式：扩展的表达式有+、?、| 和()
+
+正则表达式就是为了处理大量的文本|字符串而定义的一套规则和方法
+通过定义的这些特殊符号的辅助，系统管理员就可以快速过滤，替换或输出需要的字符串。Linux正则表达式一般以行为单位处理。
+
+正则表达式和通配符有本质区别:
+判断方法：在三剑客awk，sed，grep，egrep都是正则，其他都是通配符
+区别通配符和正则表达式最简单的方法：
+  a. 匹配文件目录名: 为通配符
+  b. 匹配文件内容（字符串，文本【文件】内容）： 为正则表达式
+  
+. :匹配任意单个字符（必须存在）
+^ :匹配开头的字符
+$ :匹配结尾的字符
+* :匹配前一个字符的零个或多个
+.* :表示任意长度的任意字符
++（扩展正则） : 表示其前面的字符出现最少一次的情况
+?（扩展正则） :表示其前面的字符出现最多一次的情况（可以0个）
+[] :表示范围内的一个或多个字符
+[a-z] :匹配中括号中范围内的任意一个字符
+[^] :匹配[^字符]之外的任意一个字符
+^[^] : 匹配不是中括号内任意一个字符开头的行
+|（扩展正则） : 匹配竖杠两边的任意一个 
+{n},{n,} : {n}:表示严格匹配n个字符, {n,}匹配花括号前面字符至少 n个字符
+{n,m} : 匹配花括号前面字符至少 n个字符，最多 m 个字符
+[root@andycentos shell]# echo -e "abbbdcc\nbbbc" |grep a*c   # *：匹配c前面有0个或多个a的行
+abbbdcc
+bbbc
+[root@andycentos shell]# echo -e "abbbdcc\nbbbc" |grep a.*c  # .*: 匹配包含a和c的所有行
+abbbdcc
+
+[root@andycentos shell]# echo -e "abbbdcc\nbbbc" |grep [az]   # [az]: 匹配包含a和z的行
+abbbdcc
+[root@andycentos shell]# echo -e "abbbdcc\nbbbc" |grep [a-z]  # [az]: 匹配包含小写字母的行
+abbbdcc
+bbbc
+[root@andycentos shell]# echo -e "abbdcc\nBbbc" |grep -E "b|B"  # 匹配包含b或B的行
+abbdcc
+Bbbc
+[root@andycentos shell]# echo "aadadcaaacc" | egrep -o "a{2,3}"  # 匹配至少2个a至多3个a的行
+aa
+aaa
+[root@andycentos shell]# echo "aadadcaaacc" | egrep -o "a{1,3}"  
+aa
+a
+aaa
+[root@andycentos shell]# echo "aadadccc" | egrep -o "a{1}"  # 精确匹配一个a
+a
+a
+a
+[root@andycentos shell]# echo "aadadccc" | egrep -o "a{1,}"  # 匹配一个a或多个a
+aa
+a
+[root@andycentos shell]# cat /etc/httpd/conf/httpd.conf | grep ^[^#]  # 匹配不是以#开头的行
+[root@andycentos shell]# cat /etc/httpd/conf/httpd.conf | grep ^[^# ]  # 匹配不是以#和空格开头的行
+
+更多信息请参照：正则表达式.md
 
 ```
 
