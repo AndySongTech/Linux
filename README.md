@@ -1901,6 +1901,38 @@ done
 
 ```
 
+#### shell functions
+```shell
+shell中允许将一组命令集合或语句形成一段可用代码，这些代码块称为shell函数。给这段代码起个名字称为函数名，后续可以直接调用该段代码。
+格式：
+#!/bin/bash
+check_ip() {
+   echo `ip a | grep global`
+   echo `ip r`
+}
+check_ip   # 调用函数
+
+函数返回值return:
+return 在函数中定义状态返回值，返回并终止函数，但返回的只能是 0-255 的数字，类似于 exit。
+#!/bin/bash
+check_ip() {
+   echo `ip a | grep global`
+   return 2   # return后面的命令将不执行
+   echo `ip r`
+}
+check_ip   # 调用函数
+
+函数的传参：
+#!/bin/bash
+hello() {
+  echo $0      # $0 表示显示shell文件名
+  echo "Hello $1"   # $1 表示第一个参数
+
+}
+hello World   # 在调用函数时传参，而不是在执行命令时。
+
+```
+
 #### shell 正则表达式
 ```shell
 正则表达式在每种语言中都会有，功能就是匹配符合你预期要求的字符串。
