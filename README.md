@@ -1994,6 +1994,59 @@ a
 [root@andycentos shell]# cat /etc/httpd/conf/httpd.conf | grep ^[^#]  # 匹配不是以#开头的行
 [root@andycentos shell]# cat /etc/httpd/conf/httpd.conf | grep ^[^# ]  # 匹配不是以#和空格开头的行
 
+正则练习：
+使用文件 /etc/init.d/functions ，下面可能有些部分题目匹配不到符合的情况。
+
+1. 过滤出包含大写字母的行
+cat /etc/init.d/functions | grep [A-Z]
+
+2. 匹配非数字字符
+cat /etc/init.d/functions | grep [^0-9]
+
+3. 过滤出一行中a在前，b在后的行
+cat /etc/init.d/functions | grep a.*b 
+
+4. 匹配a和b之间有最少2个c最多5个c的行
+cat /etc/init.d/functions | grep ac\{2,5\}b
+
+5. 过滤出以# 为开头，且第二个字符是空格的行
+cat /etc/init.d/functions | grep ^#[:space:]
+
+6.过滤出行首和行位字母相同的行
+cat /etc/init.d/functions | grep ^\([a-zA-Z]\).*\1$
+
+7.过滤出第一个字符是#，且第二个字符串是非空字符，而且结尾是数字的行
+cat /etc/init.d/functions | grep ^#[^[:space:]].*[0-9]$
+
+8.过滤出一行包含相同数字的行/etc/init.d/functions
+cat /etc/init.d/functions | egrep ".*([0-9]).*\1.*"
+cat /etc/init.d/functions | grep -E ".*([0-9]).*\1.*"
+cat /etc/init.d/functions | grep  ".*\([0-9]\).*\1.*"
+
+1. 每一秒钟输出/root下的文件至屏幕
+#!/bin/bash
+for file in `ls -l /root`
+do 
+  echo $file
+  sleep 1
+
+done
+
+2. 打印出包含某个关键词的文件（关键词执行脚本时接收）
+#!/bin/bash
+key=$1
+for file in `find / -type f`
+do 
+   grep $key $file&>/dev/null
+   if [$? -eq 0]; then
+     echo $file
+     sleep 1
+     
+   fi
+done
+
+3. 统计系统中以.sh结尾的文件总大小，输出结果以kb为单位
+
 更多信息请参照：正则表达式.md
 
 ```
