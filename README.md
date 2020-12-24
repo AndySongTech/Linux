@@ -2023,7 +2023,7 @@ cat /etc/init.d/functions | egrep ".*([0-9]).*\1.*"
 cat /etc/init.d/functions | grep -E ".*([0-9]).*\1.*"
 cat /etc/init.d/functions | grep  ".*\([0-9]\).*\1.*"
 
-1. 每一秒钟输出/root下的文件至屏幕
+9. 每一秒钟输出/root下的文件至屏幕
 #!/bin/bash
 for file in `ls -l /root`
 do 
@@ -2032,7 +2032,7 @@ do
 
 done
 
-2. 打印出包含某个关键词的文件（关键词执行脚本时接收）
+10. 打印出包含某个关键词的文件（关键词执行脚本时接收）
 #!/bin/bash
 key=$1
 for file in `find / -type f`
@@ -2045,7 +2045,7 @@ do
    fi
 done
 
-3. 统计系统中以.sh结尾的文件总大小，输出结果以kb为单位
+11. 统计系统中以.sh结尾的文件总大小，输出结果以kb为单位
 #!/bin/bash
 sum=0
 for file in `find . -name “*.sh” -exec ls -l {} \; | cut -d ” ” -f 5`
@@ -2060,19 +2060,114 @@ echo "$(($sum/1024))kb"
 
 ```
 
-####
-```
+#### sed
+```shell
+我们都知道，在Linux中一切皆文件，而在linux中有三种工具：顶配awk，中配sed，标配grep。使用这些工具，我们能够在达到同样效果的前提下节省大量的重复性工作，提高效率。
+sed [选项]  [sed命令]  [输入文件]
+说明： 
+1，注意sed软件以及后面选项，sed命令和输入文件，每个元素之间都至少有一个空格。 
+2，sed -commands(sed命令)是sed软件内置的一些命令选项，为了和前面的options（选项）区分，故称为sed命令 
+3，sed -commands 既可以是单个sed命令，也可以是多个sed命令组合。
+4，input -file (输入文件)是可选项，sed还能够从标准输入如管道获取输入。
+工作原理：
+sed读取一行，首先将这行放入到缓存中然后，才对这行进行处理，处理完成以后，将缓冲区的内容发送到终端，存储sed读取到的内容的缓存区空间称之为：模式空间（Pattern Space）
+
+option[选项]	           解释说明（带*的为重点）
+
+-n (no)               取消默认的sed软件的输出，常与sed命令的p连用。*
+-e (entry)            一行命令语句可以执行多条sed命令   *
+-r (ruguler)          使用扩展正则表达式，默认情况sed只识别基本正则表达式  *
+-i (inside)           直接修改文件内容，而不是输出到终端，如果不使用-i选项sed软件只是修改在内存中的数据，并不会影响磁盘上的文件*
+
+ 
+sed -commands[sed命令]	    解释说明（带*的为重点）
+
+a (append)                追加，在指定行后添加一行或多行文本 *                                                      
+c (change)                取代指定的行
+d (delete)                删除指定的行  *  
+i (insert)                插入，在指定行前添加一行或多行文本 *
+p (print)                 打印模式空间内容，通常p会与选项-n一起使用*
+
+特殊符号	                  解释说明（带*的为重点）   
+
+！                        对指定行以外的所有行应用命令*                                                              
+注意： sed 后面跟的sed 命令用的是单引号’‘
+sed的增删改查：如果不使用-i选项，sed命令只是修改在内存中的数据，并不会影响磁盘上的文件
+
+增：用a(append)和i(insert)
+[root@andycentos ~]# head /etc/passwd >test   #creat a test file
+[root@andycentos ~]# cat test
+[root@andycentos ~]# sed '2a this is second line' test   # append a new line after the second line
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+this is second line
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+[root@andycentos ~]# sed '2i this is inserted new line' test  # insert a new line between 1st line and sec line
+root:x:0:0:root:/root:/bin/bash
+this is inserted new line
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+[root@andycentos ~]# sed '2i this is inserted first line\nthis is inserted second line\nthis is the third line ' test
+root:x:0:0:root:/root:/bin/bash          #insert multi-line
+this is inserted first line
+this is inserted second line
+this is the third line
+bin:x:1:1:bin:/bin:/sbin/nologin
+
+删：用d(delete)
+[root@andycentos ~]# sed 'd' test    # delete all the lines
+[root@andycentos ~]# sed '1d' test    # delete the first line
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+[root@andycentos ~]# sed '1,3d' test  # delete 1-3 lines
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+sync:x:5:0:sync:/sbin:/bin/sync
+命令说明：在sed软件中，使用正则的格式和awk一样，使用2个”/“包含指定的正则表达式，即“/正则表达式/”。
+[root@andycentos ~]# sed '/root/d' test     # delete the line that include root
+[root@andycentos ~]# sed '/^root/d' test    # delete the line that start from root
+[root@andycentos ~]# sed '2,$d' test        # delete the line from 2nd line to the end
+[root@andycentos ~]# sed '2,5!d' test        # negation, delete the lines beside 2-5 line
+[root@andycentos ~]# sed -e '2d' -e '5d' test  # delete the 2nd line and the fifth line
+
+改：c(change)和替换（s, g）一般和-i一起使用
+“s”：单独使用-->将每一行中第一处匹配的字符串进行替换==>sed命令
+“g”：每一行进行全部替换-->sed命令s的替换标志之一（全局替换），非sed命令。
+“-i”：修改文件内容-->sed软件的选项，注意和sed命令i区别。
+替换格式：
+sed -i 's/目标内容/替换内容/g'  test
+sed -i 's#目标内容#替换内容#g'
+[root@andycentos ~]# sed '1c this is the new first line' test   # replace the first line
+this is the new first line
+bin:x:1:1:bin:/bin:/sbin/nologin
+[root@andycentos ~]# sed ’s/root/andy/g‘ test    # replace all the root by andy
+[root@andycentos ~]# sed ’s/root/andy‘ test      # replace the first root in the each line by andy
+[root@andycentos ~]# sed -i ’s/root/andy‘ test   # realy changed the file contents
+命令说明：如果想真正的修改文件内容，我们就需要使用选项“-i”，这个要和sed命令“i”区分开来。同时我们可以发现命令执行后的结果是没有任何输出的。
+
+查：p(print)
+“p”：输出指定内容，但默认会输出2次匹配的结果，因此一般和-n选项一起使用来取消默认输出，
+[root@andycentos ~]# sed -n '2p' test      # print the second line
+bin:x:1:1:bin:/bin:/sbin/nologin
+[root@andycentos ~]# sed -n -e '2p' -e '5p' test    # print the 2nd line and the fifth line
+[root@andycentos ~]# sed -n '2,5p' test     # print multi-line
+[root@andycentos ~]# sed -n '/root/p' test  # print the line that including root
+
+习题：
+1. 按照字符替换，例子：将/etc/selinux/config中的SELINUX=enforcing改成 disabled
+写法1：# sed -i 's/SELINUX=disabled/SELINUX=enforcing/g' config
+写法2：# sed -r -i 's/(SELINUX=)disabled/\1enforcing/g' config
+
+2.查找指定的内容再做替换，例子：将以r开头的行中的oo替换为qq
+ sed '/^r/{s/oo/qq/g}' test
+
+3.多点编辑, 例子：去除文件中的注释行和空白行
+# grep -v -E "(^#)|(^$)" passwd.bak >passwd
+# cat passwd.bak | sed -e '/^#/d' -e '/^$/d' >passwd
 
 ```
 
-####
-```
-
-```
-####
-```
-
-```
 #### awk
 ```python
 
@@ -2080,11 +2175,7 @@ ip a | grep global | awk -F/ '{print$1}'
 
 
 ```
-#### sed
-```python
 
-
-```
 
 #### xarge
 ```python
@@ -2092,5 +2183,17 @@ ip a | grep global | awk -F/ '{print$1}'
 
 ```
 
+#### stat
+```
 
+```
+
+####
+```
+
+```
+####
+```
+
+```
 
