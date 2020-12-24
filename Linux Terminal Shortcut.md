@@ -1,6 +1,6 @@
-```
+```shell
 Linux终端Terminal常用快捷键
-快捷键 功能
+快捷键       功能
 CTRL+ALT+T 打开终端
 Ctrl+a 光标移动到开始位置
 Ctrl+e 光标移动到最末尾
