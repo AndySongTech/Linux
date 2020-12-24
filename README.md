@@ -2046,6 +2046,15 @@ do
 done
 
 3. 统计系统中以.sh结尾的文件总大小，输出结果以kb为单位
+#!/bin/bash
+sum=0
+for file in `find . -name “*.sh” -exec ls -l {} \; | cut -d ” ” -f 5`
+do 
+  if[ $? -eq 0]; then
+    let sum+=$file
+  fi 
+done
+echo "$(($sum/1024))kb"
 
 更多信息请参照：正则表达式.md
 
