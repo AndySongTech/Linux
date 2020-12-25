@@ -2156,21 +2156,86 @@ bin:x:1:1:bin:/bin:/sbin/nologin
 
 习题：
 1. 按照字符替换，例子：将/etc/selinux/config中的SELINUX=enforcing改成 disabled
-写法1：# sed -i 's/SELINUX=disabled/SELINUX=enforcing/g' config
-写法2：# sed -r -i 's/(SELINUX=)disabled/\1enforcing/g' config
+写法1：sed -i 's/SELINUX=disabled/SELINUX=enforcing/g' config
+写法2：sed -r -i 's/(SELINUX=)disabled/\1enforcing/g' config
 
 2.查找指定的内容再做替换，例子：将以r开头的行中的oo替换为qq
  sed '/^r/{s/oo/qq/g}' test
 
 3.多点编辑, 例子：去除文件中的注释行和空白行
-# grep -v -E "(^#)|(^$)" passwd.bak >passwd
-# cat passwd.bak | sed -e '/^#/d' -e '/^$/d' >passwd
+  grep -v -E "(^#)|(^$)" passwd.bak >passwd
+  cat passwd.bak | sed -e '/^#/d' -e '/^$/d' >passwd
 
 ```
 
 #### awk
-```python
+```shell
+awk不仅仅是linux系统中的一个命令，而且是一种编程语言，可以用来处理数据和生成报告（excel）。处理的数据可以是一个或多个文件，可以是来自标准输入，也可以通过管道获取标准输入，awk可以在命令行上直接编辑命令进行操作，也可以编写成awk程序来进行更为复杂的运用。
+格式：
+awk -option 'pattern{action}'   # pattern相当于条件（找谁），{action}是具体操作（干什么）。 
+参数： -F ： 指定分隔符
+记录（record）：一行就是一个记录
+分隔符（field separator）：进行对记录进行切割的时候所使用的字符
+字段（field）：将一条记录分割成的每一段
+FILENAME：当前处理文件的文件名
+FS（Field Separator）：字段分隔符（默认是以空格为分隔符=）
+NR（Number of Rrecord）：记录的编号（awk每读取一行，NR就加1==）
+NF（Number of Field）：字段数量（记录了当前这条记录包含多少个字段==）
+ORS（Output Record Separator）：指定输出记录分隔符（指定在输出结果中记录末尾是什么，默认是\n，也就是换行）
+OFS（Output Field Separator）：输出字段分隔符
+RS：记录分隔符
 
+输出字段的表示方式:
+$1 $2 ... $n 输出一个指定的字段
+$NF 输出最后一个字段
+$0 输出整条记录
+[root@andycentos ~]# head /etc/passwd > awktest  # creat a test file
+[root@andycentos ~]# cat awktest
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+sync:x:5:0:sync:/sbin:/bin/sync
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+halt:x:7:0:halt:/sbin:/sbin/halt
+mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+operator:x:11:0:operator:/root:/sbin/nologin
+[root@andycentos ~]# awk 'NR>=2&&NR<=5{print $0}' awktest   # print 2-5 line
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+[root@andycentos ~]# awk '{print NR,$0}' awktest      # print the line number
+1 root:x:0:0:root:/root:/bin/bash
+2 bin:x:1:1:bin:/bin:/sbin/nologin
+3 daemon:x:2:2:daemon:/sbin:/sbin/nologin
+[root@andycentos ~]# awk -F ":" 'NF>=5{print $3}' awktest   # print the $3 NF of line NF>=5  
+0
+1
+2
+[root@andycentos ~]# awk -F: '{print NR,NF $0}' awktest     # print the NR and NF of each line
+1 7root:x:0:0:root:/root:/bin/bash
+2 7bin:x:1:1:bin:/bin:/sbin/nologin
+3 7daemon:x:2:2:daemon:/sbin:/sbin/nologin
+4 7adm:x:3:4:adm:/var/adm:/sbin/nologin
+[root@andycentos ~]# awk '/^root/' awktest       # print the line that start from root
+root:x:0:0:root:/root:/bin/bash
+[root@andycentos ~]# awk '$0~/^root/' awktest    # same function like above
+root:x:0:0:root:/root:/bin/bash
+[root@andycentos ~]# awk -F ":" '$5~/root/' awktest   # 匹配一行中的某一列
+root:x:0:0:root:/root:/bin/bash
+提示：
+  $5表示第五个区域（列）
+  ~表示匹配（正则表达式匹配）
+  /root/表示匹配root这个字符串
+  $5~/root/表示第五个区域（列）匹配正则表达式/root/，既第5列包含root这个字符串，则显示这一行。
+[root@andycentos ~]# awk -F ":" '/nologin$/' awktest    # 匹配行尾为nologin 
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+
+awk 'NR>=2&&NR<=5{print $0}' test
 ip a | grep global | awk -F/ '{print$1}' 
 
 
