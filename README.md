@@ -2230,13 +2230,83 @@ root:x:0:0:root:/root:/bin/bash
   ~表示匹配（正则表达式匹配）
   /root/表示匹配root这个字符串
   $5~/root/表示第五个区域（列）匹配正则表达式/root/，既第5列包含root这个字符串，则显示这一行。
-[root@andycentos ~]# awk -F ":" '/nologin$/' awktest    # 匹配行尾为nologin 
+[root@andycentos ~]# awk -F ":" '/nologin$/' awktest    # 匹配行尾为nologin的行 
 bin:x:1:1:bin:/bin:/sbin/nologin
 daemon:x:2:2:daemon:/sbin:/sbin/nologin
 adm:x:3:4:adm:/var/adm:/sbin/nologin
+[root@andycentos ~]# awk -F ":" '{print $1,$NF}' awktest    # list 用户名和登录类型
+root /bin/bash
+bin /sbin/nologin
+daemon /sbin/nologin
+[root@andycentos ~]# cat awktest | cut -d : -f 1,7       
+root:/bin/bash
+bin:/sbin/nologin
+
+练习： 
+1. 去网卡地址
+方法一：[root@andycentos ~]# ip a | grep global | awk -F " " '{print $2}'| awk -F/ '{print $1}'
+172.16.101.32
+10.0.3.15
+方法二：[root@andycentos ~]# ip a | grep global | cut -d " " -f 6| cut -d / -f 1|sort
+10.0.3.15
+172.16.101.32
+方法三：[root@andycentos ~]# hostname -i | awk -F " " '{print $3}'
+172.16.101.32
+[root@andycentos ~]# ifconfig eth0 | awk -F "[ ]+" 'NR==2{print $3}'
+[root@andycentos ~]# ifconfig eth0 | awk -F "[^0-9.]+" 'NR==2{print $2}'
+[root@andycentos ~]# ifconfig eth0 | awk 'BEGIN{FS="[ :]+"}NR==2{print $3}'
+[root@andycentos ~]# ifconfig eth0 | awk 'BEGIN{FS="[^0-9.]+"}NR==2{print $2}'
 
 awk 'NR>=2&&NR<=5{print $0}' test
 ip a | grep global | awk -F/ '{print$1}' 
+
+2. 在读取文件之前，输出些提示性信息（表头）。
+[root@andycentos ~]# awk -F ':' 'BEGIN{print "username","bash type"}{print $1,$NF}' test
+username bash type
+root /bin/bash
+bin /sbin/nologin
+
+3. 提示结束语
+[root@andycentos ~]# awk -F ':' 'BEGIN{print "username","bash type"}{print $1,$NF}END{print "end of file"}' test
+username bash type
+root /bin/bash
+bin /sbin/nologin
+end of file
+
+进阶： 
+1. 结合内置变量，打印指定的几行，以及字段数量
+例子；输出有多余5个字段的行的第三个字段
+# cat a.sh | awk -F ":" 'NF>=5{print $3}'
+例子：输出每行行号和该行有几个字段
+# cat a.sh | awk -F ":" '{print NR,NF}'
+例子：输出用户名，要求所有用户显示在同一行，而且用空格分隔
+# cat mypwd | awk 'BEGIN{FS=":"; ORS=" "}{print $1}'
+
+2. 结合正则来匹配一行或者某个字段
+例子：输出用户名以s为开头的用户的uid
+# cat mypwd | awk -F ":" '/^s/{print $}'
+例子：输出第五个字段是以t为结尾的用户的姓名
+# cat mypwd | awk -F ":" '$5~/t$/{print $1}'
+
+3. 采用比较符号来进行打印指定的某些行
+例子：实现仅仅输出3-5的内容，每行前面添加一个行号
+# cat mypwd | awk 'NR>=3&&NR<=5{print NR,$1}'
+或
+# cat mypwd | awk 'NR==3,NR==5{print NR,$1}'
+例子：实现仅仅输出3 和 5 和 7行的内容，每行前面添加一个行号
+# cat mypwd | awk 'NR==3||NR==5||NR==7{print NR,$1}'
+
+4. END
+例子：统计mypwd中以#开头的行有多少行
+# cat mypwd | awk 'BEGIN{n=0}/^#/{n+=1}END{print n}'
+统计：mypwd中，以：为分隔符，字段数量在3-5的行的数目
+# cat mypwd  | awk 'BEGIN{FS=":"}NF>=3&&NF<=5{n+=1}END{print n}'
+
+5. ip
+例子：统计IP
+[root@andycentos ~]# cat url.txt | awk -F "/+" '{urls[$2]++}END{for(key in urls)print key, urls[key]}’
+www.google.com 2
+www.linkedin.com  8
 
 
 ```
