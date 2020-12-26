@@ -409,15 +409,112 @@ see you
 ```
 
 #### find
-```python
+```shell
+-mount, -xdev : 只检查和指定目录在同一个文件系统下的文件，避免列出其它文件系统中的文件
+-amin n : 在过去 n 分钟内被读取过
+-anewer file : 比文件 file 更晚被读取过的文件
+-atime n : 在过去n天内被读取过的文件
+-cmin n : 在过去 n 分钟内被修改过
+-cnewer file :比文件 file 更新的文件
+-ctime n : 在过去n天内被修改过的文件
+-empty : 空的文件-gid n or -group name : gid 是 n 或是 group 名称是 name
+-ipath p, -path p : 路径名称符合 p 的文件，ipath 会忽略大小写
+-name name, -iname name : 文件名称符合 name 的文件。iname 会忽略大小写
+-size n : 文件大小 是 n 单位，b 代表 512 位元组的区块，c 表示字元数，k 表示 kilo bytes，w 是二个位元组。
+-type c : 文件类型是 c 的文件,d: 目录, c: 字型装置文件, b: 区块装置文件, p: 具名贮列, f: 一般文件, l: 符号连结, s: socket
+-pid n : process id 是 n 的文件
+
 find / -name sshd   # find the file name is sshd in / dir
 find . -name ss?*   # using wildcards to find current dir
 find -name ss?*     # find in current dir
 find / -size 1M   # find file size is 1M
 find / -type f  # b/d/c/p/l/f	匹配文件类型（后面的字幕字母依次表示块设备、目录、字符设备、管道、链接文件、文本文件）
 find /tmp/ -name *.doc -o -name *.exel -o -name *.wps   # 从/tmp下找出后缀是wps 或doc 或exel的文件 -o: 代表 'or' 
+将当前目录及其子目录下所有最近 20 天内更新过的文件列出:
+# find . -ctime -20
+查找 /var/log 目录中更改时间在 7 日以前的普通文件，并在删除之前询问它们：
+# find /var/log -type f -mtime +7 -ok rm {} \;
+查找当前目录中文件属主具有读、写权限，并且文件所属组的用户和其他用户具有读权限的文件：
+# find . -type f -perm 644 -exec ls -l {} \;
+查找系统中所有文件长度为 0 的普通文件，并列出它们的完整路径：
+# find / -type f -size 0 -exec ls -l {} \;
 
 ```
+
+#### xarge
+```shell
+xargs（英文全拼： eXtended ARGuments）是给命令传递参数的一个过滤器，也是组合多个命令的一个工具。
+xargs 可以将管道或标准输入（stdin）数据转换成命令行参数，也能够从文件的输出中读取数据。
+xargs 也可以将单行或多行文本输入转换为其他格式，例如多行变单行，单行变多行。
+xargs 默认的命令是 echo，这意味着通过管道传递给 xargs 的输入将会包含换行和空白，不过通过 xargs 的处理，换行和空白将被空格取代。
+xargs 是一个强有力的命令，它能够捕获一个命令的输出，然后传递给另外一个命令。
+之所以能用到这个命令，关键是由于很多命令不支持|管道来传递参数，而日常工作中有有这个必要，所以就有了 xargs 命令，例如：
+find /sbin -perm +700 |ls -l       #这个命令是错误的
+find /sbin -perm +700 |xargs ls -l   #这样才是正确的
+
+xargs 一般是和管道一起使用。
+-a file 从文件中读入作为sdtin
+-e flag ，注意有的时候可能会是-E，flag必须是一个以空格分隔的标志，当xargs分析到含有flag这个标志的时候就停止。
+-p 当每次执行一个argument的时候询问一次用户。
+-n num 后面加次数，表示命令在执行的时候一次用的argument的个数，默认是用所有的。
+-t 表示先打印命令，然后再执行。
+-i 或者是-I，这得看linux支持了，将xargs的每项名称，一般是一行一行赋值给 {}，可以用 {} 代替。
+-r no-run-if-empty 当xargs的输入为空的时候则停止xargs，不用再去执行了。
+-s num 命令行的最大字符数，指的是 xargs 后面那个命令的最大命令行字符数。
+-L num 从标准输入一次读取 num 行送给 command 命令。
+-l 同 -L。
+-d delim 分隔符，默认的xargs分隔符是回车，argument的分隔符是空格，这里修改的是xargs的分隔符。
+-x exit的意思，主要是配合-s使用。。
+-P 修改最大的进程数，默认是1，为0时候为as many as it can ，这个例子我没有想到，应该平时都用不到的吧。
+[root@andycentos ~]# cat test|xargs -n 2     # 2行并成一行显示
+root:x:0:0:root:/root:/bin/bash bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin adm:x:3:4:adm:/var/adm:/sbin/nologin
+[root@andycentos ~]# echo "skjkjdjkjkdj" | xargs -dk -n2
+复制所有图片文件到 /data/images 目录下：
+ls *.jpg | xargs -n1 -I {} cp {} /data/images
+xargs 结合 find 使用, 用 rm 删除太多的文件时候，可能得到一个错误信息：/bin/rm Argument list too long. 用 xargs 去避免这个问题：
+find . -type f -name "*.log" -print0 | xargs -0 rm -f
+xargs -0 将 \0 作为定界符。
+统计一个源代码目录中所有 php 文件的行数：
+find . -type f -name "*.php" -print0 | xargs -0 wc -l
+查找所有的 jpg 文件，并且压缩它们：
+find . -type f -name "*.jpg" -print | xargs tar -czvf images.tar.gz
+xargs 其他应用
+假如你有一个文件包含了很多你希望下载的 URL，你能够使用 xargs下载所有链接：
+cat url-list.txt | xargs wget -c
+
+find -print0表示在find的每一个结果之后加一个NULL字符，而不是默认加一个换行符。find的默认在每一个结果后加一个'\n'，所以输出结果是一行一行的。
+当使用了-print0之后，就变成一行了, 然后xargs -0表示xargs用NULL来作为分隔符。这样前后搭配就不会出现空格和换行符的错误了。选择NULL做分隔符，
+是因为一般编程语言把NULL作为字符串结束的标志，所以文件名不可能以NULL结尾，这样确保万无一失。
+
+```
+
+#### stat
+```shell
+-L：支持符号连接；
+-f：显示文件系统状态而非文件状态；
+-t：以简洁方式输出信息；
+--help：显示指令的帮助信息；
+--version：显示指令的版本信息。
+stat -f test
+stat -t test
+[root@andycentos ~]# stat test -t
+test 430 8 81a4 0 0 fd00 67384756 1 0 0 1608987457 1608821383 1608821383 0 4096 unconfined_u:object_r:admin_home_t:s0
+[root@andycentos ~]# stat test
+  File: ‘test’
+  Size: 430       	Blocks: 8          IO Block: 4096   regular file
+Device: fd00h/64768d	Inode: 67384756    Links: 1
+Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)
+Context: unconfined_u:object_r:admin_home_t:s0
+Access: 2020-12-26 20:57:37.199097928 +0800
+Modify: 2020-12-24 22:49:43.194992431 +0800
+Change: 2020-12-24 22:49:43.196992371 +0800
+Access：文件被访问的时间；
+Modify：文件被修改的时间；
+Change：文件的i节点（属性信息）最后一次被修改的时间。注意：文件被修改时i节点的信息也会被修改。
+
+```
+
 ### quotation mark
 ```python
 单引号（''）：转义其中所有的变量为单纯的字符串。
@@ -2241,6 +2338,9 @@ daemon /sbin/nologin
 [root@andycentos ~]# cat awktest | cut -d : -f 1,7       
 root:/bin/bash
 bin:/sbin/nologin
+[root@andycentos ~]# find . -name '*.sh' | ll | awk -F " " '{print $5}'|grep -v "^$"  
+# 找出sh文件，并显示文件大小。 “^$” 代表空行
+
 
 练习： 
 1. 去网卡地址
@@ -2312,16 +2412,6 @@ www.linkedin.com  8
 ```
 
 
-#### xarge
-```python
-
-
-```
-
-#### stat
-```
-
-```
 
 ####
 ```
