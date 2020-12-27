@@ -1,4 +1,8 @@
- 
+## vim 内容按色彩显示
+```shell
+echo export EDITOR=vim >>/etc/profile.d/env.sh
+```
+
 ## 情况1：从命令模式到输入模式
 
 ``` 
