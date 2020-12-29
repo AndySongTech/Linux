@@ -2413,12 +2413,134 @@ www.linkedin.com  8
 
 
 
-####
-```
+####SELinux
+```shell
+SELinux三种模式简介
+Enforcing：强制模式。代表SELinux在运行中，且已经开始限制domain/type之间的验证关系
+Permissive：宽容模式。代表SELinux在运行中，不过不会限制domain/type之间的验证关系，即使验证不正确，进程仍可以对文件进行操作。不过如果验证不正确会发出警告
+Disabled：关闭模式。SELinux并没有实际运行
+[root@andycentos ansible]# getenforce   # 查看当前SELinux的运行模式
+Permissive
+sestatus:
+-v：检查列于/etc/sestatus.conf内的文件安全上下文
+-b：将目前策略的规则以布尔值列出，显示on或off
+[root@andycentos ansible]# sestatus     # 查看当前系统上面SELinux的策略，运行模式等信息
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   permissive
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Max kernel policy version:      31
+root@andycentos ansible]# vim /etc/selinux/config # 修改selinux的配置文件
+SELinux的配置文件（/etc/selinux/config）
+  SELINUX=enforcing：当前SELinux的模式
+  SELINUXTYPE=targeted：当前SELinux的策略
+  如果想要修改策略和模式，就更改这个文件里面的内容即可
+
+SELinux模式的更改规则：
+①不论是从Enforcing或Permissive改为Disabled，还是由Disabled改为Enforcing或Permissive，系统都需要重新启动。因为SELinux是整合到内核中的
+②在SELinux已经运行的模式下：只能够在Enforcing和Permissive两种模式之间进行切换，而不能直接关闭SELinux（Disabled），如果你使用getenforce发现当前SELinux模式为Disabled时，请立即到/etc/selinux/config文件中将SELinux改为Enforcing，然后重新启动系统
+③如果你从Disable转到启动SELinux的模式时，系统必须针对文件写入安全上下文的信息，因此启动过程会花费不少时间等待重新写入SELinux安全上下文（有时成为SELinux Label），而且在写完之后还要再重新启动一次
+④如果你在Enforcing模式，但是可能由于一些设置的问题导致SELinux让某些服务无法正常地运行，此时可以将Enforcing的模式改为宽容（Permissive）的模式，让SELinux只会警告而，而不会直接阻止主体进程的读取权限
+   # 转换为Permissive宽容模式
+   setenforce  0
+
+   # 转换为Enforcing强制模式
+   setenforce  1
+   
+restorecon -Rv 命令
+当你从Disabled切换为Enforcing模式时，会有一堆服务无法顺利启动，会跟你说/lib/xxx里面的数据没有权限读取，所以启动失败。原因：大多是重新写入SELinux类型时出错的缘故
+解决办法：切换为Permissive宽容模式，然后使用restorecon  -Rv  /  重新还原所有SELinux的类型，就能解决这个问题。
 
 ```
-####
-```
+####iptables
+```shell
+PTABLES 是与最新的 3.5 版本 Linux内核集成的IP信息包过滤系统。如果 Linux 系统连接到因特网或LAN、服务器或连接LAN 和因特网的代理服务器，则该系统有利于在 Linux 
+系统上更好地控制IP信息包过滤和防火墙配置。
+iptables 组件是一种工具，也称为用户空间(userspace)，它使插入、修改和除去信息包过滤表中的规则变得容易。除非您正在使用 Red Hat Linux 7.1 或更高版本，
+否则需要下载该工具并安装使用它。
+
+四表五链
+学习iptables提及最多的无非就是四表五链，也许之前你对此早有耳闻，但是没有真正的研究过。下面这些总结将让你简单的记住什么是四表五链。
+四表
+filter表                      过滤数据包（默认表，最常用）
+Nat表                         用于网络地址转换（IP、端口）
+Mangle表                      修改数据包的服务类型、TTL、并且可以配置路由实现QOS
+Raw表                         决定数据包是否被状态跟踪机制处理
+五链
+INPUT链                       进来的数据包应用此规则链
+OUTPUT链                      外出的数据包应用此规则链
+FORWARD链                     转发数据包时应用此规则链
+PREROUTING链                  对数据包作路由选择前应用此链（所有的数据包进来的时侯都先由这个链处理）
+POSTROUTING链                 对数据包作路由选择后应用此链（所有的数据包出来的时侯都先由这个链处理）
 
 ```
+![imgage](https://github.com/AndySongTech/Linux/blob/main/Images/iptables-01.png)
 
+```
+table
+-t 后面跟上你要操作的表,如果不使用-t默认操作的是filter表
+-t：指定表名（默认是对filter表进行操作）
+   有如下四种：
+   -t filter
+   -t nat
+   -t mangle
+   -t raw
+command:即需要执行的命令常用命令操作有-A,-I, -D,-F,-L
+-A：追加新规则
+-D：删除指定的规则
+-I：首部或者指定的位置插入新规则
+-F：清空规则
+-Z：清空计数器
+-P：修改默认规则
+-N：自定义一条链
+-X：删除自定义的链
+-E：修改自定义链的名字
+-L；列举出iptables中所配置的规则
+-n：如果不用n选项，那么系统会将协议反解为协议名称，这个过程很慢，该选择的作用是就用来实现禁止反解为名称
+--line：在行首显示规则编号
+-v：显示详细信息（通常用来看计数器）
+注意：规则中的表名、链名要区分大小写
+
+chain: 即链，需要指出对哪个表中的哪个链进行操作, 表名为小写，链名为大写，严格区分大小写. 有如下五种：
+  INPUT
+  OUTPUT
+  FORWARD
+  PREROUTING
+  POTROUTING
+ 
+parameter: 即参数，分为通用匹配和扩展匹配, 扩展匹配又分为隐式匹配和显示匹配
+  通用匹配
+  扩展匹配
+    隐式扩展
+    显式扩展
+
+target: 即目标动作
+  ACCEPT：  请求被运行，数据包可以通过
+  DROP：    认定是一个非法请求，将数包悄悄的丢弃
+  REJECT：  认定是一个非法请求，禁止数据包同行的（带有通知机制）
+  LOG：     将这次客户端的请求记录到日志中
+  MARK：    标记一个连接
+  SNAT:     把数据包中的源地址部分替换为指定的IP
+  DNAT:     修改数据包中的目的IP
+
+iptables简单常用的操作
+1. 设置默认规则
+[root@ken ~]# iptables -P INPUT DROP    #设置INPUT链默认规则设置为DROP
+[root@ken ~]# iptables -P INPUT ACCEPT  #设置INPUT链默认规则设置为ACCEPT 
+[root@ken ~]# iptables -P OUTPUT DROP   #设置OUTPUT链默认规则设置为DROP,如果OUTPUT链开启DROP，相应组合后可防范反弹式木马 
+[root@ken ~]# iptables -P OUTPUT ACCEPT #设置OUTPUT链默认规则设置为ACCEPT
+2.清空规则
+[root@ken ~]# iptables -t filter -F    #清空filter表规则 
+[root@ken ~]# iptables -t nat -F       #清空nat表规则 
+[root@ken ~]# iptables -t mangle -F    #清空mangle表规则 
+[root@ken ~]# iptables -t raw -F       #清空raw表规则
+3. 查看规则链
+[root@ken ~]# iptables -L -n --line -v
+
+更多内容请查看iptables.md
+
+```
