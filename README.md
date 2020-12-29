@@ -2540,6 +2540,12 @@ iptables简单常用的操作
 [root@ken ~]# iptables -t raw -F       #清空raw表规则
 3. 查看规则链
 [root@ken ~]# iptables -L -n --line -v
+iptables保存及恢复
+ 
+保存iptable规则
+[root@ken ~]# iptables-save > ken
+恢复iptables规则
+[root@ken ~]# iptables-restore < ken
 
 更多内容请查看iptables.md
 
