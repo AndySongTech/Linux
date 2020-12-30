@@ -2531,10 +2531,10 @@ target: 即目标动作
 
 iptables简单常用的操作
 1. 设置默认规则
-iptables -P INPUT DROP    #设置INPUT链默认规则设置为DROP
-iptables -P INPUT ACCEPT  #设置INPUT链默认规则设置为ACCEPT 
-iptables -P OUTPUT DROP   #设置OUTPUT链默认规则设置为DROP,如果OUTPUT链开启DROP，相应组合后可防范反弹式木马 
-iptables -P OUTPUT ACCEPT #设置OUTPUT链默认规则设置为ACCEPT
+iptables -P INPUT DROP    #设置INPUT链默认规则为DROP
+iptables -P INPUT ACCEPT  #设置INPUT链默认规则为ACCEPT 
+iptables -P OUTPUT DROP   #设置OUTPUT链默认规则为DROP,如果OUTPUT链开启DROP，相应组合后可防范反弹式木马 
+iptables -P OUTPUT ACCEPT #设置OUTPUT链默认规则为ACCEPT
 2.清空规则
 iptables -t filter -F    #清空filter表规则 
 iptables -t nat -F       #清空nat表规则 
@@ -2557,6 +2557,148 @@ iptables保存及恢复
 iptables-save > /data/iptables/backup
 恢复iptables规则
 iptables-restore < /data/iptables/backup
+
+iptables通用匹配
+-s：指定源ip
+-d：指定目标ip
+-i：指定进入数据包所经过网卡名称
+-o：指定发出数据包所经过网卡名称
+样例：
+1. 允许特定的主机.10可以访问本主机所有端口或指定端口或指定网卡
+iptables -P INPUT DROP   # 设置INPUT链默认规则为DROP, 也就是默认拒绝所有流量
+iptables -A INPUT -s 192.168.1.10 -j ACCEPT  # 对.10 放行所有端口
+iptalbes -A INPUT -p tcp --dport 80 -s 192.168.1.10 -d localhost -j ACCEPT  # 对.10只放行80端口
+iptables -A INPUT -i eth033 -s 192.168.10.10 -j -ACCEPT # .10流量可以通过eth033网卡
+
+2.允许所有流量进入主机的特定ip或接口，应用于主机拥有多个网卡
+iptables -A INPUT -d 192.168.1.100 -j ACCEPT  # 允许所有外部主机访问本主机的.100地址
+iptalbes -A INPUT -i eth033 -j ACCEPT  # 允许所有外部主机访问本主机的eth033网卡地址
+ 
+
+iptables扩展匹配之隐式匹配
+ -p tcp/udp/icmp： 隐式匹配使用-p后面加上协议名称
+1.对于icmp协议的隐式匹配
+格式：-p icmp –icmp-type
+ping数据包协议是icmp协议：type 0：应答包 ， type 8：请求包
+  >可以从10.220.5.1 ping 其他主机，禁止其他主机ping 10.220.5.1
+   iptables -I INPUT -p icmp --icmp-type 0 -d 10.220.5.1 -j ACCEPT
+   iptables -I INPUT -p icmp --icmp-type 8 -s 10.220.5.1 -j ACCEPT
+
+2.对于tcp协议的隐式扩展
+-p tcp 选项
+选项：
+–sport：源端口
+–dport：目标端口
+–tcp-flags list1 list2：根据tcp包中的标志位进行匹配
+–syn：syn为1，ack，fin都为0，即三次握手的第一次
+1.让所有主机可以访问10.220.5.1上的网站，但是禁止10.220.5.191访问网站
+iptables -A INPUT -p tcp --dport 80 -d 10.220.5.1 -j ACCEPT
+iptables -I INPUT -p tcp --dport 80 -s 10.220.5.191 -j DROP
+2.只允许从10.220.5.182发送连接httpd请求
+iptables -I INPUT -p tcp -s 10.220.5.182 --tcp-flags syn,ack,fin syn -j ACCEPT
+3. 对于udp协议的隐式扩展
+-p udp –sport|–dport
+
+iptables扩展匹配之显示匹配
+注意：用显式扩展的时候，必须指定扩展功能所依赖模块的名称
+指定： -m 扩展名称 –options-xxx
+
+显示扩展1：state
+作用：根据nv_conntrack的记录来对连接进行规则匹配，是根据连接记录中的状态信息做匹配
+状态：
+NEW：表示新的连接请求（syn=1 ack=0 fin=0）
+三次握手的第一次
+ping请求的第一包
+udp通信的第一个包
+ESTABLISHED：连接建立完成状态下所传递的数据包（syn=0 ack=1 fin=0）
+INVALID：非法连接
+RELATED：相关联的连接
+1.让所有人都可以访问web站点
+iptables -A INPUT -m state --state NEW,ESTABLISHED -p tcp --dport 80 -j ACCEPT
+iptables -A OUTPUT -m state --state ESTABLISHED -p tcp --sport 80 -j ACCEPT
+
+显示扩展2：multiport
+作用：对连续或者离散的端口做匹配
+选型：
+–sports port[,port|,port:port]…
+–dports port[,port|,port:port]…
+–ports  port[,port|,port:port]…
+例子：
+–sport 80,22,3306         逗号表示离散
+–sport 80:1024              冒号表示连续
+–sport 80,22,23:1024    离散和连续的可以写在一起
+1.允许让10.220.5.182访问本机的80 22 443 3389 3306端口
+iptables -I INPUT -p tcp -s 10.220.5.182 -m multiport --dports 80,22,443,3389,3306 -j ACCEPT
+
+显示扩展3：iprange
+作用：用于对ip地址的范围做匹配
+选项
+–src-range
+–dst-range
+1. 10.220.5.1~10.220.5.100无法访问web
+iptables -I INPUT -p tcp --dport 80 -m iprange --src-range 10.220.5.1-10.220.5.100 -j DROP 
+
+显示扩展4：limit
+作用：限速
+–limit rate[/second|/minute|/hour|/day]：指示每分钟/限制最大连接数为
+–limit-burst number：指示当总连接数超过xx时，启动 litmit/minute 限制
+1.实现每分钟可以发送10个ping包，峰值是7
+iptables -I INPUT -p icmp -m limit --limit 10/minute --limit-burst 7 -j ACCEPT
+2.防暴力破解。限制登录22端口的请求的频率（限制1小时只能尝试登录ssh5次）
+iptables -I INPUT -p tcp --dport 22 -m state --state NEW -m limit --limit 5/hour --limit-burst 5 -j ACCEPT
+ 
+显示扩展5：connlimit
+作用：限制一个客户端可以同时与当前主机建立几个链接
+[!] –connlimit-above n
+1. 限制每个IP可以同时登录5个ssh
+iptables -A INPUT -p tcp --dport 22 -m connlimit --connlimit-above 5 -j DROP 
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+
+
+实战练习：
+1. 允许10.220.5.0/24网段的客户端可以访问本机的80端口
+iptables -A INPUT -s 10.220.50/24 --dport 80 -j ACCEPT
+ 
+2.实现单向ping(即服务器可以ping通客户端，客户端ping不通服务器端)
+iptables -A INPUT -p icmp --icmp-type 0 -d 10.220.5.166 -j ACCEPT
+iptables -A OUTPUT -p icmp --icmp-type 8 -s 10.220.5.166 -j ACCEPT
+注：–icmp-type 0 表示应答包
+–icmp-type 8 表示请求包
+
+3.只允许10.220.5.188发送httpd请求
+iptables -A INPUT -s 10.220.5.188 -p tcp --dport 80 --tcp-flags syn,ack,fin syn -j ACCEPT
+ 
+4.限制只有10.220.5.188可以连接ssh
+iptables -A INPUT -s 10.220.5.188 -p tcp --dport 22 -j ACCEPT
+ 
+5.允许10.220.5.188访问本机22，80，3306，100到200的端口
+iptables -A INPUT -p tcp -m multiport --dport 22,80,3306,100:200 -m state --state NEW,ESTABLISHED -j ACCEPT
+ 
+6.只允许ip地址10.220.5.10至10.220.5.20之间的主机访问本机的web网站
+iptables -A INPUT -p tcp --dport 80 -m iprange --src-range 10.220.5.10-10.220.5.20 -j ACCEPT
+ 
+7. 防暴力破解&DOS攻击，限制请求登录22端口的频率
+ iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m limit --limit 10/minute --limit-burst 20 -j ACCEPT
+iptables -A INPUT -p tcp --dport 22 -m state --state ESTABLISHED -j ACCEPT
+ 
+8.限制只能从10.220.5.188登录后台界面（admin.php）
+iptables -A INPUT -s 10.220.5.188 -m string --algo bm --string "admin.php" -j ACCEPT
+ 
+9.限制每个用户只能同时登录5个ssh
+iptables -A INPUT -p tcp --dport 22 -m connlimit ! --connlimit-above 5 -j ACCEPT
+ 
+10.限制每个客户端只能与80端口并发连接10个链接
+iptables -A INPUT -p tcp --dport 80 -m state --state NEW,ESTABLISHED -m connlimit ！--connlimit-above 10 -j ACCEPT
+ 
+11.指定在1h只登录达到5次之上的，该次链接请求会被丢弃
+iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --name loginSSH --update --seconds 3600 --hitcount 5 -j DROP
+ 
+12. 设置客户端访问100.100.10.90：80 的流量跳转到172.16.30.100：80
+iptables -t nat -I PREROUTING -d 100.100.10.90 --dport 80 -p tcp -j DNAT --to-destination 172.16.30.100:80
+
+12.保存iptables规则
+service iptables save
+
 
 更多内容请查看iptables.md
 
