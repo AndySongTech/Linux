@@ -2511,7 +2511,9 @@ chain: 即链，需要指出对哪个表中的哪个链进行操作, 表名为�
   FORWARD
   PREROUTING
   POTROUTING
- 
+```
+![image](https://github.com/AndySongTech/Linux/blob/main/Images/iptables_chains.png)
+```
 parameter: 即参数，分为通用匹配和扩展匹配, 扩展匹配又分为隐式匹配和显示匹配
   通用匹配
   扩展匹配
@@ -2529,23 +2531,32 @@ target: 即目标动作
 
 iptables简单常用的操作
 1. 设置默认规则
-[root@ken ~]# iptables -P INPUT DROP    #设置INPUT链默认规则设置为DROP
-[root@ken ~]# iptables -P INPUT ACCEPT  #设置INPUT链默认规则设置为ACCEPT 
-[root@ken ~]# iptables -P OUTPUT DROP   #设置OUTPUT链默认规则设置为DROP,如果OUTPUT链开启DROP，相应组合后可防范反弹式木马 
-[root@ken ~]# iptables -P OUTPUT ACCEPT #设置OUTPUT链默认规则设置为ACCEPT
+iptables -P INPUT DROP    #设置INPUT链默认规则设置为DROP
+iptables -P INPUT ACCEPT  #设置INPUT链默认规则设置为ACCEPT 
+iptables -P OUTPUT DROP   #设置OUTPUT链默认规则设置为DROP,如果OUTPUT链开启DROP，相应组合后可防范反弹式木马 
+iptables -P OUTPUT ACCEPT #设置OUTPUT链默认规则设置为ACCEPT
 2.清空规则
-[root@ken ~]# iptables -t filter -F    #清空filter表规则 
-[root@ken ~]# iptables -t nat -F       #清空nat表规则 
-[root@ken ~]# iptables -t mangle -F    #清空mangle表规则 
-[root@ken ~]# iptables -t raw -F       #清空raw表规则
+iptables -t filter -F    #清空filter表规则 
+iptables -t nat -F       #清空nat表规则 
+iptables -t mangle -F    #清空mangle表规则 
+iptables -t raw -F       #清空raw表规则
 3. 查看规则链
-[root@ken ~]# iptables -L -n --line -v
+iptables -nL  # 查看filter表的规则
+iptables -L -n --line -v  # 查看filter表的详细规则，并显示规则的行号
+iptables -t nat -nL  # 查看nat表的规则
+iptables -t mangle -nL  # 查看Mangle表的规则
+iptables -t raw -nL   查看raw表的规则
+4. 删除规则
+iptables -nL --line  # 查找filter表的规则行号
+iptables -D INPUT 1 # 删除filter表INPUT链的第一个规则
+iptables -t nat -nL --line   # 查找nat表的规则行号
+iptables -t nat -D PREROUTING 2 # 删除nat表PREROUTING链的第二个规则
+
 iptables保存及恢复
- 
 保存iptable规则
-[root@ken ~]# iptables-save > ken
+iptables-save > /data/iptables/backup
 恢复iptables规则
-[root@ken ~]# iptables-restore < ken
+iptables-restore < /data/iptables/backup
 
 更多内容请查看iptables.md
 
