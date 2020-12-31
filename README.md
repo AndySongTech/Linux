@@ -1214,8 +1214,6 @@ cost = 9
 执行yum命令检测结果：
 yum clean all    # 清空yum缓存的全部数据
 yum repolist     # 检查yum仓库中有多少个可用的rpm包'
-
-
 yum install -y htop httpd # install htop and httpd
 yum remove htop -y # remove htop
 yum reinstall -y htop # reinstall htop
@@ -1396,6 +1394,7 @@ systemctl restart vsftpd  # restart vsftpd service, it will interrupt the servic
 systemctl reload firewalld  # soft restart service, it will not interrupt the service, but not all the service support this command
 systemctl enable vsftpd    # launch service at login
 systemctl disable smb      # Do not launch service at login
+systemctl is-enabled httpd    # chech if the httpd is start at login
 
 ```
 
