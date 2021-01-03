@@ -1,6 +1,10 @@
 ## vim 内容按色彩显示
 ```shell
 echo export EDITOR=vim >>/etc/profile.d/env.sh
+
+末行模式：当前窗口生效
+:syntax on
+
 ```
 
 ## 情况1：从命令模式到输入模式
