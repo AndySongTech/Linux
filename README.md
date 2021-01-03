@@ -60,6 +60,7 @@ lvextend -r centos/root /dev/sda2  # r stand for resize
 #### 内存&CPU: free, top, ps，htop
 ```python
 free -h # 查看内存使用情况， -h 代表human readable
+lscpu   # 查看cpu信息
 top # 查看CPU使用情况, 按’z‘ 彩色显示进程, 'c' display absolute path of running pro
 htop is much powerful than top (Install by: yum install -y htop)
 top -u root #查看root用户使用的进程
