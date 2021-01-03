@@ -181,7 +181,49 @@ head -v andy.txt # always show the file name
 tail -vn 5 andy.txt # display the tail 5 lines
 
 ```
+#### ss
+```
+ss: another utility to investigate sockets
+Uasage:
+ss [ OPTIONS ]
+ss [ OPTIONS ] [ FILTER ]
+   -V, --version       output version information
+   -n, --numeric       don't resolve service names
+   -r, --resolve       resolve host names
+   -a, --all           display all sockets
+   -l, --listening     display listening sockets
+   -o, --options       show timer information
+   -e, --extended      show detailed socket information
+   -m, --memory        show socket memory usage
+   -p, --processes     show process using socket
+   -i, --info          show internal TCP information
+   -s, --summary       show socket usage summary
+   -b, --bpf           show bpf filter socket information
+   -E, --events        continually display sockets as they are destroyed
+   -Z, --context       display process SELinux security contexts
+   -z, --contexts      display process and socket SELinux security contexts
+   -N, --net           switch to the specified network namespace name
 
+   -4, --ipv4          display only IP version 4 sockets
+   -6, --ipv6          display only IP version 6 sockets
+   -0, --packet        display PACKET sockets
+   -t, --tcp           display only TCP sockets
+   -S, --sctp          display only SCTP sockets
+   -u, --udp           display only UDP sockets
+   -d, --dccp          display only DCCP sockets
+   -w, --raw           display only RAW sockets
+   -x, --unix          display only Unix domain sockets
+       --vsock         display only vsock sockets
+   -f, --family=FAMILY display sockets of type FAMILY
+       FAMILY := {inet|inet6|link|unix|netlink|vsock|help}
+
+   -K, --kill          forcibly close sockets, display what was closed
+   
+ss -ntl 
+ss -ntpl
+
+
+```
 #### kill
 ```python
 kill 2323 # kill pid process
