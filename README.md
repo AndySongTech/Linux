@@ -171,14 +171,17 @@ sysdig -c root # more power tools for monitor user activity
 install guide: https://github.com/draios/sysdig/wiki/How-to-Install-Sysdig-for-Linux
 
 ```
-#### more & cat & head & tail
+#### more & cat & head & tail & less
 ```python
 cat andy.txt # display the file contents one time
 cat /etc/services  # show the service port number
 more andy.txt # display the file contents page by page
+less andy.txt # display the file contents page by page and show the precentage
+cat /etc/nginx/nginx.conf | less 
 head -n 5 andy.txt # display the head 5 lines
 head -v andy.txt # always show the file name
 tail -vn 5 andy.txt # display the tail 5 lines
+tail access.log -f # keep up displaying the appended data 
 
 ```
 #### ss
@@ -219,8 +222,8 @@ ss [ OPTIONS ] [ FILTER ]
 
    -K, --kill          forcibly close sockets, display what was closed
    
-ss -ntl 
-ss -ntpl
+ss -ntl  # view the tcp listen port without protocal name
+ss -ntpl # add the procees name compare with above. 
 
 
 ```
@@ -2744,4 +2747,7 @@ service iptables save
 
 更多内容请查看iptables.md
 
+```
+```
+本文档为学习笔记，记录个人学习过程和心得, 主要内容来自技术流ken的教学课件
 ```
