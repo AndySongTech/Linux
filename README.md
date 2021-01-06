@@ -110,6 +110,7 @@ cd .. # back to parent dir
 cd  # back to current user home dir
 cd - # back to the last dir
 cd /.. /.. # go back two levels dir 
+cd ../tasks/httpd  # back to parent dir then enter tasks dir
 ```
 
 #### cp & scp 
