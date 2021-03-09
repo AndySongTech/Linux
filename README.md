@@ -1172,7 +1172,21 @@ rpm -Fvh ipset-6.38-2.el7.x86_64.rpm
 rpm -Uvh ipset-6.38-2.el7.x86_64.rpm # 升级
 
 ```
+#### source install
+**install**
+```shell
+./configure --prefix=/usr/bin   # specify the app install location, default is usr/local/bin
+make 
+make install
+combined to one command: 
+./configure && make && make install
+```
+- refer: https://blog.csdn.net/wscrf/article/details/80568517               
 
+**uninstall**
+```shell
+make uninstall  # execute command under make dir
+```
 #### yum 
 ```python
 yum的工作原理：
