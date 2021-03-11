@@ -2473,7 +2473,7 @@ www.linkedin.com  8
 
 
 
-####SELinux
+#### SELinux
 ```shell
 SELinux三种模式简介
 Enforcing：强制模式。代表SELinux在运行中，且已经开始限制domain/type之间的验证关系
@@ -2516,7 +2516,7 @@ restorecon -Rv 命令
 解决办法：切换为Permissive宽容模式，然后使用restorecon  -Rv  /  重新还原所有SELinux的类型，就能解决这个问题。
 
 ```
-####iptables
+#### iptables
 ```shell
 PTABLES 是与最新的 3.5 版本 Linux内核集成的IP信息包过滤系统。如果 Linux 系统连接到因特网或LAN、服务器或连接LAN 和因特网的代理服务器，则该系统有利于在 Linux 
 系统上更好地控制IP信息包过滤和防火墙配置。
