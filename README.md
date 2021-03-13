@@ -1640,7 +1640,6 @@ $$  当前Shell进程ID。对于 Shell 脚本，就是这些脚本所在的进�
 #### file test operators
 
 |测试符|描述|实例|
-|:---|---:|:---:|
 |-e|文件或者目录存在为真|[ -e path ] path 存在为 true|
 |-f|文件存在为真|[ -f file_path ] 文件存在为 true|
 |-d|目录存在为真|[ -d dir_path ] 目录存在为 true|
