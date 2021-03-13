@@ -1634,7 +1634,19 @@ $*  传递给脚本或函数的所有参数。
 $?  上个命令的退出状态，或函数的返回值。
 $$  当前Shell进程ID。对于 Shell 脚本，就是这些脚本所在的进程ID。
 
+[root@andycentos ~]# test -f test ;echo $?   # test if the file exixt, returnning 0 indicates that the command execution is successful, opposite indicates failed
+0
 ```
+#### file test operators
+
+|测试符|描述|实例|
+|:---|---:|:---:|
+|-e|文件或者目录存在为真|[ -e path ] path 存在为 true|
+|-f|文件存在为真|[ -f file_path ] 文件存在为 true|
+|-d|目录存在为真|[ -d dir_path ] 目录存在为 true|
+|-r|有读权限为真|[ -r file_path ]file_path有读权限为真|
+|-w|有写权限为真|[ -r file_path ]file_path有写权限为真|  
+|-x|有执行权限为真|[ -r file_path ]file_path有执行权限为真|
 
 #### uniq
 ```python
