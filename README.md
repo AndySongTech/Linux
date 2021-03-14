@@ -1979,6 +1979,24 @@ for 变量名 in 取值列表
 do
 　命令
 done
+or 
+for ((i=1;i<10;i++))
+do 
+  echo $i
+done
+
+or
+for time in `seq 9 -1 0`
+do
+   echo -n -e "\b$time"
+   sleep 1
+done
+echo
+or 
+for ((;;))
+do
+  echo "hello world"
+done  
 
 #!/bin/bash
 for i in {1..10}
