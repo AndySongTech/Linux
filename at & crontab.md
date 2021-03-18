@@ -192,5 +192,11 @@ no crontab for root
 no crontab for root
 注意：在计划任务中，默认的最小单位就是分，不能再小了。
 
+5. 实战案例
+>crontab -e
+*/1 * * * * cd ~/ && /bin/bash countdown.sh   # 进入sh文件所在的目录，通过/bin/bash执行脚本, 每分钟运行一次脚本
+
+crontab -e
+*/1 * * * * /bin/bash ~/Downloads/countdown.sh  
  
 ```
