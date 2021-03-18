@@ -196,7 +196,7 @@ no crontab for root
 >crontab -e
 */1 * * * * cd ~/ && /bin/bash countdown.sh   # 进入sh文件所在的目录，通过/bin/bash执行脚本, 每分钟运行一次脚本
 
-crontab -e
+>crontab -e
 */1 * * * * /bin/bash ~/Downloads/countdown.sh  
  
 ```
