@@ -338,6 +338,7 @@ du -sh /etc
 #### date & timedatectl
 ```python
 date # check date
+date +%Y%m%d  # show the date like 20201020
 date "+%Y/%m/%d"  # show the date like 2020/10/20
 date "+%H:%M:%S"  # show the time like 14:32:30
 date "+%Y-%m-%d %H:%M:%S" # 2020-12-01 02:03:22
