@@ -315,7 +315,7 @@ ss [ OPTIONS ] [ FILTER ]
    -K, --kill          forcibly close sockets, display what was closed
    
 ss -ntl  # view the tcp listen port without protocal name
-ss -ntpl # add the procees name compare with above. 
+ss -l # add the procees name compare with above. 
 
 
 ```
@@ -343,6 +343,7 @@ du -sh /etc
 #### date & timedatectl
 ```python
 date # check date
+date -r 1615971962  # convert timestamp to human readable
 date +%Y%m%d  # show the date like 20201020
 date "+%Y/%m/%d"  # show the date like 2020/10/20
 date "+%H:%M:%S"  # show the time like 14:32:30
@@ -353,6 +354,8 @@ timedatactl list-timezones # list time zones
 timedatectl set-timezone Asia/Shanghai # set time zone
 timedatectl set-time 2020-11-30  # set the date, format: YY-MM-DD
 timedatectl set-time 16:43:32  # set the time, format: HH:MM:SS
+yum install -y ntp 
+ntpdate ntp1.cloud.aliyuncs.com
 
 
 ```
