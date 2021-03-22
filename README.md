@@ -167,6 +167,7 @@ cat /etc/services  # 查看服务端口号
 #### Hostnamectl & uname & hostname
 ```python
 hostname # 查看主机名
+hostname -f # show the full name, the FQDN (Fully Qualified Domain Name)
 hostnamectl # 查看主机信息（主机名，OS， Kernel，icon name), 包含（uname, hostname, cat /etc/redhat-release, cat /proc/version ）
 hostnamectl set-hostname andycentos # 修改主机名，立即生效无需重启
 hostnamectl set-location Shanghai  # set location
