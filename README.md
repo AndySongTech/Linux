@@ -126,7 +126,7 @@ clear # clear screen, or using shortcut 'control+l'
 
 ```
 
-#### 磁盘分区: df, fdisk, lsblk
+#### df, fdisk, lsblk, du
 ```python
 df -h  # 查看磁盘使用情况 
 fdisk -l   # 查看磁盘分区 
@@ -139,6 +139,10 @@ lvs   #查看logical volumes
 partx -u /dev/sda
 pvresize /dev/sda
 lvextend -r centos/root /dev/sda2  # r stand for resize
+du # show file and dir size
+du -s # show dir total size in k
+du -sh # shwo dir total size in G
+du -sh /usr 
 
 
 ```
