@@ -467,6 +467,7 @@ top is /bin/top
 
 ip a   # show ip address
 ip r   # show ip route table
+route  # show ip route table
 ip a | grep global   # only show the global line
 
 ```
