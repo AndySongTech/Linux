@@ -679,8 +679,12 @@ this is
 
 ```
 
-#### soft link & hard link
+#### ln, soft link & hard link
 ```python
+ln source_dir dst_dit   #默认硬链接
+-s      #软链接
+-f      #如果目标文件存在时，直接移除后再创建(危险)
+
 softlink:
 ln -s source_dir dst_dit
 1.就是相当于win中的快捷方式，基本不占用磁盘空间
@@ -1369,6 +1373,7 @@ gpgcheck = 0
 cost = 9
 
 执行yum命令检测结果：
+yum install wget jq psmisc vim net-tools telnet yum-utils device-mapper-persistent-data lvm2 git -y  # useful tools for initial os configuration
 yum clean all    # 清空yum缓存的全部数据
 yum repolist     # 检查yum仓库中有多少个可用的rpm包'
 yum install -y htop httpd # install htop and httpd
