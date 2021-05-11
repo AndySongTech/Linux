@@ -1,4 +1,4 @@
-```
+
 元字符
  
 匹配内容
@@ -42,4 +42,4 @@ a|b	匹配字符a或字符b
 shell正则表达式: https://www.cnblogs.com/kenken2018/p/10229140.html
 
 shell表达式与运算符: https://www.cnblogs.com/kenken2018/p/10223533.html
-```
+
