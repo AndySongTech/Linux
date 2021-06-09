@@ -1577,7 +1577,9 @@ yum -y install openssh openssh-clients openssh-server openssh-askpass
 ssh-keygen  # generate the key
 ssh-copy-id 172.16.22.1  # send the pub key to remote host
 ssh 172.16.22.1  # ssh remote host without user name and password
-
+ssh-keygen -t rsa
+for i in k8s-master01 k8s-master02 k8s-master03 k8s-node01 k8s-node02;do ssh-copy-id -i .ssh/id_rsa.pub $i;done
+for i in k8s-master02 k8s-master03 k8s-node01 k8s-node02;do scp kernel-ml-4.19.12-1.el7.elrepo.x86_64.rpm kernel-ml-devel-4.19.12-1.el7.elrepo.x86_64.rpm $i:/root/ ; done
 ```
 
 #### nfs
