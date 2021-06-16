@@ -549,6 +549,10 @@ hello
 ncie to meet you
 see you
 
+more account.tf | grep -i -A 10 id     # 匹配的后10行
+more account.tf | grep -i -B 10 “id ”     # 匹配的前10行
+more account.tf | grep -i -C 10 “id ” > ~/temp/id.txt     # 匹配的前后10行
+
 ```
 
 #### find
