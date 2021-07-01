@@ -1,5 +1,4 @@
 ```shell
-`
 简介
 用简单的话来定义tcpdump，就是：dump the traffic on a network，根据使用者的定义对网络上的数据包进行截获的包分析工具。 tcpdump可以将网络中传送的数据包的“头”完全截获下来提供分析。它支持针对网络层、协议、主机、网络或端口的过滤，并提供and、or、not等逻辑语句来帮助你去掉无用的信息。
 
@@ -97,6 +96,5 @@ Wireshark(以前是ethereal)是Windows下非常简单易用的抓包工具。但
 -> tcpdump  -XvvennSs 0 -i eth0 tcp[20:2]=0x4745 or tcp[20:2]=0x4854
 0x4745 为"GET"前两个字母"GE",0x4854 为"HTTP"前两个字母"HT"。
 tcpdump 对截获的数据并没有进行彻底解码，数据包内的大部分内容是使用十六进制的形式直接打印输出的。显然这不利于分析网络故障，通常的解决办法是先使用带-w参数的tcpdump 截获数据并保存到文件中，然后再使用其他程序(如Wireshark)进行解码分析。当然也应该定义过滤规则，以避免捕获的数据包填满整个硬盘。
-`
 ```
 - Refer: https://www.cnblogs.com/ggjucheng/archive/2012/01/14/2322659.html
