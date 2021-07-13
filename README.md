@@ -276,7 +276,7 @@ tail -vn 5 andy.txt # display the tail 5 lines
 tail access.log -f # keep up displaying the appended data 
 
 ```
-#### ss
+#### ss & netstat
 ```
 ss: another utility to investigate sockets
 Uasage:
@@ -315,7 +315,8 @@ ss [ OPTIONS ] [ FILTER ]
    -K, --kill          forcibly close sockets, display what was closed
    
 ss -ntl  # view the tcp listen port without protocal name
-ss -l # add the procees name compare with above. 
+ss -l # add the procees name compare with above
+netstat -ntlp |grep nginx  # check the tcp listening port
 
 
 ```
